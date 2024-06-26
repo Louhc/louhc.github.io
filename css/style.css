@@ -339,13 +339,12 @@ body .h2 {
   text-transform: none;
   letter-spacing: normal;
   font-weight: bold;
-  font-size: 1rem;
+  font-size: 1.4rem;
 }
 body h3 {
   color: rgba(86,124,119,0.8);
-  text-decoration: underline;
   font-weight: bold;
-  font-size: 0.9rem;
+  font-size: 1.2rem;
 }
 body h4,
 body h5,
@@ -1131,11 +1130,11 @@ article header .postdate {
 article .content h2:before {
   position: absolute;
   top: -4px;
-  left: -1rem;
+  left: -1.4rem;
   color: #cc2a41;
   content: "#";
   font-weight: bold;
-  font-size: 1.2rem;
+  font-size: 1.6rem;
 }
 article .content img,
 article .content video {
