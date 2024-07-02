@@ -6,15 +6,15 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="HandheldFriendly" content="True">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
-    <meta name="description" content="Introduction to Modern Cryptography Reading Notes  I Introduction and Classical Cryptography  看起来就是一些简单的介绍和完美加密算法，懒得看了，跳过跳过。  II Private-Key (Symmetric) Cryptography  3 Private-Key Encryption">
+    <meta name="description" content="Introduction to Modern Cryptography Reading Notes 3 Private-Key Encryption 具体安全和渐进安全 安全有两种定义，具体的(concrete)和渐进的(asymasymptotic)。简单地说，具体安全依靠具体的数值，而渐进安全依靠关于  的函数。 对于具体安全的定义  A scheme is -secure i">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Introduction to Modern Cryptography(1)(2)(3)">
+<meta property="og:title" content="Introduction to Modern Cryptography(3) 私钥加密">
 <meta property="og:url" content="https://louhc.github.io/2024/06/21/modern-crypto-3/index.html">
 <meta property="og:site_name" content="Hello,I&#39;m louhc">
-<meta property="og:description" content="Introduction to Modern Cryptography Reading Notes  I Introduction and Classical Cryptography  看起来就是一些简单的介绍和完美加密算法，懒得看了，跳过跳过。  II Private-Key (Symmetric) Cryptography  3 Private-Key Encryption">
+<meta property="og:description" content="Introduction to Modern Cryptography Reading Notes 3 Private-Key Encryption 具体安全和渐进安全 安全有两种定义，具体的(concrete)和渐进的(asymasymptotic)。简单地说，具体安全依靠具体的数值，而渐进安全依靠关于  的函数。 对于具体安全的定义  A scheme is -secure i">
 <meta property="og:locale">
 <meta property="article:published_time" content="2024-06-21T08:00:00.000Z">
-<meta property="article:modified_time" content="2024-06-27T05:58:10.624Z">
+<meta property="article:modified_time" content="2024-06-29T08:06:23.793Z">
 <meta property="article:author" content="louhc">
 <meta property="article:tag" content="crypto">
 <meta name="twitter:card" content="summary">
@@ -37,7 +37,7 @@
       
     
     <!-- title -->
-    <title>Introduction to Modern Cryptography(1)(2)(3)</title>
+    <title>Introduction to Modern Cryptography(3) 私钥加密</title>
     <!-- async scripts -->
     <!-- Google Analytics -->
 
@@ -209,16 +209,16 @@ mjx-container[display="true"] + br {
     <div id="share" style="display: none">
       <ul>
   <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://louhc.github.io/2024/06/21/modern-crypto-3/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://louhc.github.io/2024/06/21/modern-crypto-3/&text=Introduction to Modern Cryptography(1)(2)(3)"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://louhc.github.io/2024/06/21/modern-crypto-3/&title=Introduction to Modern Cryptography(1)(2)(3)"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://louhc.github.io/2024/06/21/modern-crypto-3/&is_video=false&description=Introduction to Modern Cryptography(1)(2)(3)"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=Introduction to Modern Cryptography(1)(2)(3)&body=Check out this article: https://louhc.github.io/2024/06/21/modern-crypto-3/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://louhc.github.io/2024/06/21/modern-crypto-3/&title=Introduction to Modern Cryptography(1)(2)(3)"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://louhc.github.io/2024/06/21/modern-crypto-3/&title=Introduction to Modern Cryptography(1)(2)(3)"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://louhc.github.io/2024/06/21/modern-crypto-3/&title=Introduction to Modern Cryptography(1)(2)(3)"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://louhc.github.io/2024/06/21/modern-crypto-3/&title=Introduction to Modern Cryptography(1)(2)(3)"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://louhc.github.io/2024/06/21/modern-crypto-3/&name=Introduction to Modern Cryptography(1)(2)(3)&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://louhc.github.io/2024/06/21/modern-crypto-3/&t=Introduction to Modern Cryptography(1)(2)(3)"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://louhc.github.io/2024/06/21/modern-crypto-3/&text=Introduction to Modern Cryptography(3) 私钥加密"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://louhc.github.io/2024/06/21/modern-crypto-3/&title=Introduction to Modern Cryptography(3) 私钥加密"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://louhc.github.io/2024/06/21/modern-crypto-3/&is_video=false&description=Introduction to Modern Cryptography(3) 私钥加密"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Introduction to Modern Cryptography(3) 私钥加密&body=Check out this article: https://louhc.github.io/2024/06/21/modern-crypto-3/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://louhc.github.io/2024/06/21/modern-crypto-3/&title=Introduction to Modern Cryptography(3) 私钥加密"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://louhc.github.io/2024/06/21/modern-crypto-3/&title=Introduction to Modern Cryptography(3) 私钥加密"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://louhc.github.io/2024/06/21/modern-crypto-3/&title=Introduction to Modern Cryptography(3) 私钥加密"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://louhc.github.io/2024/06/21/modern-crypto-3/&title=Introduction to Modern Cryptography(3) 私钥加密"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://louhc.github.io/2024/06/21/modern-crypto-3/&name=Introduction to Modern Cryptography(3) 私钥加密&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://louhc.github.io/2024/06/21/modern-crypto-3/&t=Introduction to Modern Cryptography(3) 私钥加密"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
 </ul>
 
     </div>
@@ -239,7 +239,7 @@ to Modern Cryptography Reading Notes</span></a><ol class="toc-child"><li class="
   <header>
     
     <h1 class="posttitle p-name" itemprop="name headline">
-        Introduction to Modern Cryptography(1)(2)(3)
+        Introduction to Modern Cryptography(3) 私钥加密
     </h1>
 
 
@@ -278,13 +278,6 @@ to Modern Cryptography Reading Notes</span></a><ol class="toc-child"><li class="
   <div class="content e-content" itemprop="articleBody">
     <h1 id="introduction-to-modern-cryptography-reading-notes"><em>Introduction
 to Modern Cryptography</em> Reading Notes</h1>
-<ul>
-<li>I <strong>Introduction and Classical Cryptography</strong></li>
-</ul>
-<p>看起来就是一些简单的介绍和完美加密算法，懒得看了，跳过跳过。</p>
-<ul>
-<li>II <strong>Private-Key (Symmetric) Cryptography</strong></li>
-</ul>
 <h2 id="private-key-encryption">3 Private-Key Encryption</h2>
 <h3 id="具体安全和渐进安全">具体安全和渐进安全</h3>
 <p><strong>安全</strong>有两种定义，<strong>具体的(concrete)</strong>和<strong>渐进的(asymasymptotic)</strong>。简单地说，具体安全依靠具体的数值，而渐进安全依靠关于
@@ -669,16 +662,16 @@ to Modern Cryptography Reading Notes</span></a><ol class="toc-child"><li class="
     <div id="share-footer" style="display: none">
       <ul>
   <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://louhc.github.io/2024/06/21/modern-crypto-3/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://louhc.github.io/2024/06/21/modern-crypto-3/&text=Introduction to Modern Cryptography(1)(2)(3)"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://louhc.github.io/2024/06/21/modern-crypto-3/&title=Introduction to Modern Cryptography(1)(2)(3)"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://louhc.github.io/2024/06/21/modern-crypto-3/&is_video=false&description=Introduction to Modern Cryptography(1)(2)(3)"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=Introduction to Modern Cryptography(1)(2)(3)&body=Check out this article: https://louhc.github.io/2024/06/21/modern-crypto-3/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://louhc.github.io/2024/06/21/modern-crypto-3/&title=Introduction to Modern Cryptography(1)(2)(3)"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://louhc.github.io/2024/06/21/modern-crypto-3/&title=Introduction to Modern Cryptography(1)(2)(3)"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://louhc.github.io/2024/06/21/modern-crypto-3/&title=Introduction to Modern Cryptography(1)(2)(3)"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://louhc.github.io/2024/06/21/modern-crypto-3/&title=Introduction to Modern Cryptography(1)(2)(3)"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://louhc.github.io/2024/06/21/modern-crypto-3/&name=Introduction to Modern Cryptography(1)(2)(3)&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://louhc.github.io/2024/06/21/modern-crypto-3/&t=Introduction to Modern Cryptography(1)(2)(3)"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://louhc.github.io/2024/06/21/modern-crypto-3/&text=Introduction to Modern Cryptography(3) 私钥加密"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://louhc.github.io/2024/06/21/modern-crypto-3/&title=Introduction to Modern Cryptography(3) 私钥加密"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://louhc.github.io/2024/06/21/modern-crypto-3/&is_video=false&description=Introduction to Modern Cryptography(3) 私钥加密"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Introduction to Modern Cryptography(3) 私钥加密&body=Check out this article: https://louhc.github.io/2024/06/21/modern-crypto-3/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://louhc.github.io/2024/06/21/modern-crypto-3/&title=Introduction to Modern Cryptography(3) 私钥加密"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://louhc.github.io/2024/06/21/modern-crypto-3/&title=Introduction to Modern Cryptography(3) 私钥加密"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://louhc.github.io/2024/06/21/modern-crypto-3/&title=Introduction to Modern Cryptography(3) 私钥加密"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://louhc.github.io/2024/06/21/modern-crypto-3/&title=Introduction to Modern Cryptography(3) 私钥加密"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://louhc.github.io/2024/06/21/modern-crypto-3/&name=Introduction to Modern Cryptography(3) 私钥加密&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://louhc.github.io/2024/06/21/modern-crypto-3/&t=Introduction to Modern Cryptography(3) 私钥加密"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
 </ul>
 
     </div>

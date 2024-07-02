@@ -6,15 +6,15 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="HandheldFriendly" content="True">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
-    <meta name="description" content="Introduction to Modern Cryptography Reading Notes 6 Hash Functions and Applications">
+    <meta name="description" content="Introduction to Modern Cryptography Reading Notes 10 *Algorithms for Factoring and Computing Discrete Logarithms (skip)">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Introduction to Modern Cryptography(6)">
-<meta property="og:url" content="https://louhc.github.io/2024/06/27/modern-crypto-6/index.html">
+<meta property="og:title" content="Introduction to Modern Cryptography(10)">
+<meta property="og:url" content="https://louhc.github.io/2024/06/30/modern-crypto-10/index.html">
 <meta property="og:site_name" content="Hello,I&#39;m louhc">
-<meta property="og:description" content="Introduction to Modern Cryptography Reading Notes 6 Hash Functions and Applications">
+<meta property="og:description" content="Introduction to Modern Cryptography Reading Notes 10 *Algorithms for Factoring and Computing Discrete Logarithms (skip)">
 <meta property="og:locale">
-<meta property="article:published_time" content="2024-06-27T08:00:00.000Z">
-<meta property="article:modified_time" content="2024-06-27T08:32:12.467Z">
+<meta property="article:published_time" content="2024-06-30T00:55:22.000Z">
+<meta property="article:modified_time" content="2024-06-29T09:03:05.807Z">
 <meta property="article:author" content="louhc">
 <meta property="article:tag" content="crypto">
 <meta name="twitter:card" content="summary">
@@ -37,7 +37,7 @@
       
     
     <!-- title -->
-    <title>Introduction to Modern Cryptography(6)</title>
+    <title>Introduction to Modern Cryptography(10)</title>
     <!-- async scripts -->
     <!-- Google Analytics -->
 
@@ -194,8 +194,10 @@ mjx-container[display="true"] + br {
     <span id="actions">
       <ul>
         
+        <li><a class="icon" aria-label="Previous post" href="/2024/06/30/modern-crypto-11/"><i class="fa-solid fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
         
-        <li><a class="icon" aria-label="Next post" href="/2024/06/26/modern-crypto-5/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Next post" href="/2024/06/30/modern-crypto-9/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
         
         <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
         <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
@@ -208,17 +210,17 @@ mjx-container[display="true"] + br {
     <br/>
     <div id="share" style="display: none">
       <ul>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://louhc.github.io/2024/06/27/modern-crypto-6/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://louhc.github.io/2024/06/27/modern-crypto-6/&text=Introduction to Modern Cryptography(6)"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://louhc.github.io/2024/06/27/modern-crypto-6/&title=Introduction to Modern Cryptography(6)"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://louhc.github.io/2024/06/27/modern-crypto-6/&is_video=false&description=Introduction to Modern Cryptography(6)"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=Introduction to Modern Cryptography(6)&body=Check out this article: https://louhc.github.io/2024/06/27/modern-crypto-6/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://louhc.github.io/2024/06/27/modern-crypto-6/&title=Introduction to Modern Cryptography(6)"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://louhc.github.io/2024/06/27/modern-crypto-6/&title=Introduction to Modern Cryptography(6)"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://louhc.github.io/2024/06/27/modern-crypto-6/&title=Introduction to Modern Cryptography(6)"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://louhc.github.io/2024/06/27/modern-crypto-6/&title=Introduction to Modern Cryptography(6)"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://louhc.github.io/2024/06/27/modern-crypto-6/&name=Introduction to Modern Cryptography(6)&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://louhc.github.io/2024/06/27/modern-crypto-6/&t=Introduction to Modern Cryptography(6)"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://louhc.github.io/2024/06/30/modern-crypto-10/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://louhc.github.io/2024/06/30/modern-crypto-10/&text=Introduction to Modern Cryptography(10)"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://louhc.github.io/2024/06/30/modern-crypto-10/&title=Introduction to Modern Cryptography(10)"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://louhc.github.io/2024/06/30/modern-crypto-10/&is_video=false&description=Introduction to Modern Cryptography(10)"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Introduction to Modern Cryptography(10)&body=Check out this article: https://louhc.github.io/2024/06/30/modern-crypto-10/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://louhc.github.io/2024/06/30/modern-crypto-10/&title=Introduction to Modern Cryptography(10)"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://louhc.github.io/2024/06/30/modern-crypto-10/&title=Introduction to Modern Cryptography(10)"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://louhc.github.io/2024/06/30/modern-crypto-10/&title=Introduction to Modern Cryptography(10)"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://louhc.github.io/2024/06/30/modern-crypto-10/&title=Introduction to Modern Cryptography(10)"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://louhc.github.io/2024/06/30/modern-crypto-10/&name=Introduction to Modern Cryptography(10)&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://louhc.github.io/2024/06/30/modern-crypto-10/&t=Introduction to Modern Cryptography(10)"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
 </ul>
 
     </div>
@@ -226,8 +228,8 @@ mjx-container[display="true"] + br {
     
       <div id="toc">
         <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#introduction-to-modern-cryptography-reading-notes"><span class="toc-number">1.</span> <span class="toc-text">Introduction
-to Modern Cryptography Reading Notes</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#hash-functions-and-applications"><span class="toc-number">1.1.</span> <span class="toc-text">6 Hash Functions and
-Applications</span></a></li></ol></li></ol>
+to Modern Cryptography Reading Notes</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#algorithms-for-factoring-and-computing-discrete-logarithms"><span class="toc-number">1.1.</span> <span class="toc-text">10
+*Algorithms for Factoring and Computing Discrete Logarithms</span></a></li></ol></li></ol>
       </div>
     
   </span>
@@ -240,7 +242,7 @@ Applications</span></a></li></ol></li></ol>
   <header>
     
     <h1 class="posttitle p-name" itemprop="name headline">
-        Introduction to Modern Cryptography(6)
+        Introduction to Modern Cryptography(10)
     </h1>
 
 
@@ -252,7 +254,7 @@ Applications</span></a></li></ol></li></ol>
       
     <div class="postdate">
       
-        <time datetime="2024-06-27T08:00:00.000Z" class="dt-published" itemprop="datePublished">2024-06-27</time>
+        <time datetime="2024-06-30T00:55:22.000Z" class="dt-published" itemprop="datePublished">2024-06-29</time>
         
       
     </div>
@@ -279,8 +281,9 @@ Applications</span></a></li></ol></li></ol>
   <div class="content e-content" itemprop="articleBody">
     <h1 id="introduction-to-modern-cryptography-reading-notes"><em>Introduction
 to Modern Cryptography</em> Reading Notes</h1>
-<h2 id="hash-functions-and-applications">6 Hash Functions and
-Applications</h2>
+<h2 id="algorithms-for-factoring-and-computing-discrete-logarithms">10
+*Algorithms for Factoring and Computing Discrete Logarithms</h2>
+<p>(skip)</p>
 
   </div>
 </article>
@@ -309,24 +312,24 @@ Applications</h2>
     
       <div id="toc-footer" style="display: none">
         <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#introduction-to-modern-cryptography-reading-notes"><span class="toc-number">1.</span> <span class="toc-text">Introduction
-to Modern Cryptography Reading Notes</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#hash-functions-and-applications"><span class="toc-number">1.1.</span> <span class="toc-text">6 Hash Functions and
-Applications</span></a></li></ol></li></ol>
+to Modern Cryptography Reading Notes</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#algorithms-for-factoring-and-computing-discrete-logarithms"><span class="toc-number">1.1.</span> <span class="toc-text">10
+*Algorithms for Factoring and Computing Discrete Logarithms</span></a></li></ol></li></ol>
       </div>
     
 
     <div id="share-footer" style="display: none">
       <ul>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://louhc.github.io/2024/06/27/modern-crypto-6/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://louhc.github.io/2024/06/27/modern-crypto-6/&text=Introduction to Modern Cryptography(6)"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://louhc.github.io/2024/06/27/modern-crypto-6/&title=Introduction to Modern Cryptography(6)"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://louhc.github.io/2024/06/27/modern-crypto-6/&is_video=false&description=Introduction to Modern Cryptography(6)"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=Introduction to Modern Cryptography(6)&body=Check out this article: https://louhc.github.io/2024/06/27/modern-crypto-6/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://louhc.github.io/2024/06/27/modern-crypto-6/&title=Introduction to Modern Cryptography(6)"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://louhc.github.io/2024/06/27/modern-crypto-6/&title=Introduction to Modern Cryptography(6)"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://louhc.github.io/2024/06/27/modern-crypto-6/&title=Introduction to Modern Cryptography(6)"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://louhc.github.io/2024/06/27/modern-crypto-6/&title=Introduction to Modern Cryptography(6)"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://louhc.github.io/2024/06/27/modern-crypto-6/&name=Introduction to Modern Cryptography(6)&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://louhc.github.io/2024/06/27/modern-crypto-6/&t=Introduction to Modern Cryptography(6)"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://louhc.github.io/2024/06/30/modern-crypto-10/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://louhc.github.io/2024/06/30/modern-crypto-10/&text=Introduction to Modern Cryptography(10)"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://louhc.github.io/2024/06/30/modern-crypto-10/&title=Introduction to Modern Cryptography(10)"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://louhc.github.io/2024/06/30/modern-crypto-10/&is_video=false&description=Introduction to Modern Cryptography(10)"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Introduction to Modern Cryptography(10)&body=Check out this article: https://louhc.github.io/2024/06/30/modern-crypto-10/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://louhc.github.io/2024/06/30/modern-crypto-10/&title=Introduction to Modern Cryptography(10)"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://louhc.github.io/2024/06/30/modern-crypto-10/&title=Introduction to Modern Cryptography(10)"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://louhc.github.io/2024/06/30/modern-crypto-10/&title=Introduction to Modern Cryptography(10)"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://louhc.github.io/2024/06/30/modern-crypto-10/&title=Introduction to Modern Cryptography(10)"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://louhc.github.io/2024/06/30/modern-crypto-10/&name=Introduction to Modern Cryptography(10)&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://louhc.github.io/2024/06/30/modern-crypto-10/&t=Introduction to Modern Cryptography(10)"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
 </ul>
 
     </div>
