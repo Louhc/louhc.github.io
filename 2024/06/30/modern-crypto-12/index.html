@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"louhc.github.io","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="Introduction to Modern Cryptography Reading Notes 12 Public-Key Encryption 定义  A public-key encryption scheme is a triple of probabilistic polynomial-time algorithms \((\text{Gen}, \text{Enc},">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Introduction to Modern Cryptography(12)">
+<meta property="og:url" content="https://louhc.github.io/2024/06/30/modern-crypto-12/index.html">
+<meta property="og:site_name" content="Hello, I&#39;m Louhc">
+<meta property="og:description" content="Introduction to Modern Cryptography Reading Notes 12 Public-Key Encryption 定义  A public-key encryption scheme is a triple of probabilistic polynomial-time algorithms \((\text{Gen}, \text{Enc},">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2024-06-30T08:51:01.000Z">
+<meta property="article:modified_time" content="2024-09-24T12:31:31.395Z">
+<meta property="article:author" content="Louhc">
+<meta property="article:tag" content="crypto">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://louhc.github.io/2024/06/30/modern-crypto-12/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Introduction to Modern Cryptography(12) | Hello, I'm Louhc</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Hello, I'm Louhc</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://louhc.github.io/2024/06/30/modern-crypto-12/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Louhc">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hello, I'm Louhc">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Introduction to Modern Cryptography(12)
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-06-30 00:51:01" itemprop="dateCreated datePublished" datetime="2024-06-30T00:51:01-08:00">2024-06-30</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-09-24 04:31:31" itemprop="dateModified" datetime="2024-09-24T04:31:31-08:00">2024-09-24</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Reading-Notes/" itemprop="url" rel="index"><span itemprop="name">Reading Notes</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1
+id="introduction-to-modern-cryptography-reading-notes"><em>Introduction
+to Modern Cryptography</em> Reading Notes</h1>
+<h2 id="public-key-encryption">12 Public-Key Encryption</h2>
+<h3 id="定义">定义</h3>
+<blockquote>
+<p>A public-key encryption scheme is a triple of probabilistic
+polynomial-time algorithms <span class="math inline">\((\text{Gen},
+\text{Enc}, \text{Dec})\)</span> such that:</p>
+<ol type="1">
+<li>The key-generation algorithm <span
+class="math inline">\(\text{Gen}\)</span> takes as input the security
+parameter <span class="math inline">\(1^n\)</span> and outputs a pair of
+keys <span class="math inline">\((pk, sk)\)</span>. We refer to the
+first of these as the public key and the second as the private key. We
+assume for convenience that <span class="math inline">\(pk\)</span> and
+<span class="math inline">\(sk\)</span> each has length at least <span
+class="math inline">\(n\)</span>, and that <span
+class="math inline">\(n\)</span> can be determined from <span
+class="math inline">\(pk\)</span>, <span
+class="math inline">\(sk\)</span>. The public key <span
+class="math inline">\(pk\)</span> defines a message space <span
+class="math inline">\(\mathcal{M}_{pk}\)</span>.</li>
+<li>The encryption algorithm <span
+class="math inline">\(\text{Enc}\)</span> takes as input a public key
+<span class="math inline">\(pk\)</span> and message <span
+class="math inline">\(m\in \mathcal{M}_{pk}\)</span>, and outputs a
+ciphertext <span class="math inline">\(c\)</span>; we denote this by
+<span class="math inline">\(c \leftarrow \text{Enc}_{pk}(m)\)</span>.
+(Looking ahead, <span class="math inline">\(\text{Enc}\)</span> will
+need to be probabilistic in order to achieve meaningful security.)</li>
+<li>The deterministic decryption algorithm <span
+class="math inline">\(\text{Dec}\)</span> takes as input a private key
+<span class="math inline">\(sk\)</span> and a ciphertext <span
+class="math inline">\(c\)</span>, and outputs a message <span
+class="math inline">\(m\)</span> or a special symbol <span
+class="math inline">\(\perp\)</span> denoting failure. We write this as
+<span class="math inline">\(m:=\text{Dec}_{sk}(c)\)</span>.</li>
+</ol>
+<p>It is required that, except with negligible probability over the
+randomness of <span class="math inline">\(\text{Gen}\)</span> and <span
+class="math inline">\(\text{Enc}\)</span>, we have <span
+class="math inline">\(\text{Dec}_{sk}(\text{Enc}_{pk}(m))=m\)</span> for
+any message <span class="math inline">\(m\in
+\mathcal{M}_{pk}\)</span>.</p>
+</blockquote>
+<p>下面定义与之对应的安全测试</p>
+<blockquote>
+<p>The eavesdropping indistinguishability experiment <span
+class="math inline">\(\text{PubK}^{\text{eav}}_{\mathcal{A},\Pi(n)}\)</span>:</p>
+<ol type="1">
+<li><span class="math inline">\(\text{Gen}(1^n)\)</span> is run to
+obtain keys <span class="math inline">\((pk, sk)\)</span>.</li>
+<li>Adversary <span class="math inline">\(\mathcal{A}\)</span> is given
+<span class="math inline">\(pk\)</span>, and outputs a pair of
+equal-length messages <span class="math inline">\(m_0, m_1\in
+\mathcal{M}_{pk}\)</span>.</li>
+<li>A uniform bit <span class="math inline">\(b\in \{0, 1\}\)</span> is
+chosen, and then a ciphertext <span class="math inline">\(c \leftarrow
+\text{Enc}_{pk}(m_b)\)</span> is computed and given to <span
+class="math inline">\(\mathcal{A}\)</span>. We call <span
+class="math inline">\(c\)</span> the challenge ciphertext.</li>
+<li><span class="math inline">\(\mathcal{A}\)</span> outputs a bit <span
+class="math inline">\(b&#39;\)</span>. The output of the experiment is
+<span class="math inline">\(1\)</span> if <span
+class="math inline">\(b&#39; = b\)</span>, and <span
+class="math inline">\(0\)</span> otherwise. If <span
+class="math inline">\(b&#39; = b\)</span> we say that <span
+class="math inline">\(\mathcal{A}\)</span> succeeds.</li>
+</ol>
+</blockquote>
+<p>还有安全定义</p>
+<blockquote>
+<p>A public-key encryption scheme <span
+class="math inline">\(\Pi=(\text{Gen}, \text{Enc}, \text{Dec})\)</span>
+has indistinguishable encryptions in the presence of an eavesdropper if
+for all probabilistic polynomial-time adversaries <span
+class="math inline">\(\mathcal{A}\)</span> there is a negligible
+function <span class="math inline">\(\text{negl}\)</span> such that
+<span
+class="math display">\[\text{Pr}[\text{PubK}^{\text{eav}}_{\mathcal{A},\Pi(n)}=1]\leq
+\frac12+\text{negl}(n)\]</span></p>
+</blockquote>
+<p>它是等价于于 CPA-secure 的。</p>
+<p>接下来考虑到我们需要使用一个公钥进行多次加密</p>
+<blockquote>
+<p>The LR-oracle experiment <span
+class="math inline">\(\text{PubK}^{\text{LR-cpa}}_{\mathcal{A},\Pi(n)}\)</span>:</p>
+<ol type="1">
+<li><span class="math inline">\(\text{Gen}(1^n)\)</span> is run to
+obtain keys <span class="math inline">\((pk, sk)\)</span>.</li>
+<li>A uniform bit <span class="math inline">\(b\in\{0, 1\}\)</span> is
+chosen.</li>
+<li>The adversary <span class="math inline">\(\mathcal{A}\)</span> is
+given input <span class="math inline">\(pk\)</span> and oracle access to
+<span class="math inline">\(\text{LR}_{pk,b}(\cdot,
+\cdot)\)</span>.</li>
+<li>The adversary <span class="math inline">\(\mathcal{A}\)</span>
+outputs a bit <span class="math inline">\(b&#39;\)</span>.</li>
+<li>The output of the experiment is defined to be <span
+class="math inline">\(1\)</span> if <span class="math inline">\(b&#39; =
+b\)</span>, and <span class="math inline">\(0\)</span> otherwise. If
+<span
+class="math inline">\(\text{PubK}^{\text{LR-cpa}}_{\mathcal{A},\Pi(n)}=1\)</span>,
+we say that <span class="math inline">\(\mathcal{A}\)</span>
+succeeds.</li>
+</ol>
+</blockquote>
+<p>和上面类似，可以定义 <strong>indistinguishable multiple
+encryptions</strong>。事实上，满足 CPA-secure
+的公钥加密方案都是indistinguishable multiple
+encryptions。（即它们都是等价的）</p>
+<p>（证明skip）</p>
+<p>公钥方案一般比私钥方案更容易受到选择密文攻击</p>
+<blockquote>
+<p>The CCA indistinguishability experiment <span
+class="math inline">\(\text{PubK}^{\text{cca}}_{\mathcal{A},\Pi(n)}\)</span>:</p>
+<ol type="1">
+<li><span class="math inline">\(\text{Gen}(1^n)\)</span> is run to
+obtain keys <span class="math inline">\((pk, sk)\)</span>.</li>
+<li>The adversary <span class="math inline">\(\mathcal{A}\)</span> is
+given <span class="math inline">\(pk\)</span> and access to a decryption
+oracle <span class="math inline">\(\text{Dec}_{sk}(\cdot)\)</span>. It
+outputs a pair of messages <span class="math inline">\(m_0, m_1\in
+\mathcal{M}_{pk}\)</span> of the same length.</li>
+<li>A uniform bit <span class="math inline">\(b\in\{0, 1\}\)</span> is
+chosen, and then a ciphertext <span class="math inline">\(c\leftarrow
+\text{Enc}_{pk}(m_b)\)</span> is computed and given to <span
+class="math inline">\(\mathcal{A}\)</span>.</li>
+<li><span class="math inline">\(\mathcal{A}\)</span> continues to
+interact with the decryption oracle, but may not request a decryption of
+<span class="math inline">\(c\)</span> itself. Finally, <span
+class="math inline">\(\mathcal{A}\)</span> outputs a bit <span
+class="math inline">\(b&#39;\)</span>.</li>
+<li>The output of the experiment is defined to be <span
+class="math inline">\(1\)</span> if <span class="math inline">\(b&#39; =
+b\)</span>, and <span class="math inline">\(0\)</span> otherwise.</li>
+</ol>
+</blockquote>
+<p>由此定义 <strong>indistinguishable encryptions under a
+chosen-ciphertext attack</strong>，或称
+<strong>CCA-secure</strong>。</p>
+<p>如果一个方案是 indistinguishable encryptions under a
+chosen-ciphertext attack，那么它也是 indistinguishable multiple
+encryptions under a chosenciphertext attack。</p>
+<hr />
+<h3 id="混合加密">混合加密</h3>
+<p>并联私钥加密和公钥加密，得到<strong>混合加密方案</strong>，(1)
+选择一个密钥 <span
+class="math inline">\(k\sim\mathrm{Uniform}\)</span>；(2) 将 <span
+class="math inline">\(k\)</span>
+用公钥加密发送出去。一个更为直接的方式是使用一个公钥原语(primitive)，<strong>key-encapsulation
+mechanism (KEM)</strong>。</p>
+<blockquote>
+<p>A key-encapsulation mechanism (KEM) is a tuple of probabilistic
+polynomial-time algorithms <span class="math inline">\((\text{Gen},
+\text{Encaps}, \text{Decaps})\)</span> such that:</p>
+<ol type="1">
+<li>The key-generation algorithm <span
+class="math inline">\(\text{Gen}\)</span> takes as input the security
+parameter <span class="math inline">\(1^n\)</span> and outputs a
+public-/private-key pair <span class="math inline">\((pk, sk)\)</span>.
+We assume <span class="math inline">\(pk\)</span> and <span
+class="math inline">\(sk\)</span> each has length at least <span
+class="math inline">\(n\)</span>, and that <span
+class="math inline">\(n\)</span> can be determined from <span
+class="math inline">\(pk\)</span>.</li>
+<li>The encapsulation algorithm <span
+class="math inline">\(\text{Encaps}\)</span> takes as input a public key
+<span class="math inline">\(pk\)</span> (which implicitly defines <span
+class="math inline">\(n\)</span>). It outputs a ciphertext <span
+class="math inline">\(c\)</span> and a key <span
+class="math inline">\(k\in\{0, 1\}^{\ell(n)}\)</span> where <span
+class="math inline">\(\ell\)</span> is the key length. We write this as
+<span class="math inline">\((c, k)\leftarrow
+\text{Encaps}_{pk}(1^n)\)</span>.</li>
+<li>The deterministic decapsulation algorithm <span
+class="math inline">\(\text{Decaps}\)</span> takes as input a private
+key <span class="math inline">\(sk\)</span> and a ciphertext <span
+class="math inline">\(c\)</span>, and outputs a key <span
+class="math inline">\(k\)</span> or a special symbol <span
+class="math inline">\(\perp\)</span> denoting failure. We write this as
+<span class="math inline">\(k:=\text{Decaps}_{sk}(c)\)</span>.</li>
+</ol>
+<p>It is required that with all but negligible probability over the
+randomness of <span class="math inline">\(\text{Gen}\)</span> and <span
+class="math inline">\(\text{Encaps}\)</span>, if <span
+class="math inline">\(\text{Encaps}_{pk}(1^n)\)</span> outputs <span
+class="math inline">\((c, k)\)</span> then <span
+class="math inline">\(\text{Decaps}_{sk}(c)\)</span> outputs <span
+class="math inline">\(k\)</span>.</p>
+</blockquote>
+<p>用 KEM 生成的密钥加密数据，称为 <strong>data-encapsulation mechanism
+(DEM)</strong>，它是一个公钥加密方案。</p>
+<blockquote>
+<p>Let <span class="math inline">\(\Pi=(\text{Gen}, \text{Encaps},
+\text{Decaps})\)</span> be a KEM with key length <span
+class="math inline">\(n\)</span>, and let <span
+class="math inline">\(\Pi&#39;=(\text{Gen}&#39;,\text{Enc}&#39;,\text{Dec}&#39;)\)</span>
+be a private-key encryption scheme. Construct a public-key encryption
+scheme <span
+class="math inline">\(\Pi^{\text{hy}}=(\text{Gen}^{\text{hy}},
+\text{Enc}^{\text{hy}}, \text{Dec}^{\text{hy}})\)</span> as follows:</p>
+<ul>
+<li><p><span class="math inline">\(\text{Gen}^{\text{hy}}\)</span>: on
+input <span class="math inline">\(1^n\)</span> run <span
+class="math inline">\(\text{Gen}(1^n)\)</span> and use the public and
+private keys <span class="math inline">\((pk, sk)\)</span> that are
+output.</p></li>
+<li><p><span class="math inline">\(\text{Enc}^{\text{hy}}\)</span>: on
+input a public key <span class="math inline">\(pk\)</span> and a message
+<span class="math inline">\(m\in\{0, 1\}^∗\)</span> do:</p>
+<ol type="1">
+<li>Compute <span class="math inline">\((c, k)\leftarrow
+\text{Encaps}_{pk}(1^n)\)</span>.</li>
+<li>Compute <span class="math inline">\(c&#39;\leftarrow
+\text{Enc}&#39;_k(m)\)</span>.</li>
+<li>Output the ciphertext <span class="math inline">\(\langle c,
+c&#39;\rangle\)</span>.</li>
+</ol></li>
+<li><p><span class="math inline">\(\text{Dec}^{\text{hy}}\)</span>: on
+input a private key <span class="math inline">\(sk\)</span> and a
+ciphertext <span class="math inline">\(\langle c, c&#39;\rangle\)</span>
+do:</p>
+<ol type="1">
+<li>Compute <span class="math inline">\(k :=
+\text{Decaps}_{sk}(c)\)</span>.</li>
+<li>Output the message <span class="math inline">\(m :=
+\text{Dec}&#39;_k(c&#39;)\)</span>.</li>
+</ol></li>
+</ul>
+</blockquote>
+<p>下面定义 KEM 的 CPA-secure</p>
+<blockquote>
+<p>The CPA indistinguishability experiment <span
+class="math inline">\(\text{KEM}^{\text{cpa}}_{\mathcal{A},\Pi(n)}\)</span>:</p>
+<ol type="1">
+<li><span class="math inline">\(\text{Gen}(1^n)\)</span> is run to
+obtain keys <span class="math inline">\((pk, sk)\)</span>. Then <span
+class="math inline">\(\text{Encaps}_{pk}(1^n)\)</span> is run to
+generate <span class="math inline">\((c, k)\)</span> with <span
+class="math inline">\(k\in\{0, 1\}^n\)</span>.</li>
+<li>A uniform bit <span class="math inline">\(b\in\{0, 1\}\)</span> is
+chosen. If <span class="math inline">\(b = 0\)</span> set <span
+class="math inline">\(\hat k := k\)</span>. If <span
+class="math inline">\(b = 1\)</span> then choose a uniform <span
+class="math inline">\(\hat k\in \{0, 1\}^n\)</span>.</li>
+<li>Give <span class="math inline">\((pk, c, \hat k)\)</span> to <span
+class="math inline">\(\mathcal{A}\)</span>, who outputs a bit <span
+class="math inline">\(b&#39;\)</span> . The output of the experiment is
+defined to be <span class="math inline">\(1\)</span> if <span
+class="math inline">\(b&#39; = b\)</span>, and <span
+class="math inline">\(0\)</span> otherwise.</li>
+</ol>
+</blockquote>
+<p>当 <span
+class="math inline">\(\text{Pr}[\text{KEM}^{\text{cpa}}_{\mathcal{A},\Pi(n)}]\leq\frac12+\text{negl}(n)\)</span>,
+称其为 CPA-secure。</p>
+<p>如果 <span class="math inline">\(\Pi\)</span> 是 CPA-secure 的，
+<span class="math inline">\(\Pi&#39;\)</span> 是 EAV-secure
+的（注意这里不要求 <span class="math inline">\(\Pi&#39;\)</span>
+CPA-secure），那么 <span class="math inline">\(\Pi^{\text{hy}}\)</span>
+是 CPA-secure 的。（证明 skip）</p>
+<p>但是，如果 <span class="math inline">\(\Pi&#39;\)</span> 不是
+CCA-secure 的，那么 <span class="math inline">\(\Pi^{\text{hy}}\)</span>
+也不是 CCA-secure 的。（因为即使攻击者无法知道密钥，也可以调用 <span
+class="math inline">\(\text{Decaps}\)</span>
+知晓一些关于解密结果的信息）</p>
+<p>先定义 KEM 的 CCA-secure</p>
+<blockquote>
+<p>The CCA indistinguishability experiment <span
+class="math inline">\(\text{KEM}^{\text{cca}}_{\mathcal{A},\Pi(n)}\)</span>:</p>
+<ol type="1">
+<li><span class="math inline">\(\text{Gen}(1^n)\)</span> is run to
+obtain keys <span class="math inline">\((pk, sk)\)</span>. Then <span
+class="math inline">\(\text{Encaps}_{pk}(1^n)\)</span> is run to
+generate <span class="math inline">\((c, k)\)</span> with <span
+class="math inline">\(k\in\{0, 1\}^n\)</span>.</li>
+<li>Choose a uniform bit <span class="math inline">\(b\in\{0,
+1\}\)</span>. If <span class="math inline">\(b = 0\)</span> set <span
+class="math inline">\(\hat k := k\)</span>. If <span
+class="math inline">\(b = 1\)</span> then choose a uniform <span
+class="math inline">\(\hat k\in\{0, 1\}^n\)</span>.</li>
+<li><span class="math inline">\(\mathcal{A}\)</span> is given <span
+class="math inline">\((pk, c, \hat k)\)</span> and access to an oracle
+<span class="math inline">\(\text{Decaps}_{sk}(\cdot)\)</span>, but may
+not request decapsulation of <span class="math inline">\(c\)</span>
+itself.</li>
+<li><span class="math inline">\(\mathcal{A}\)</span> outputs a bit <span
+class="math inline">\(b&#39;\)</span>. The output of the experiment is
+defined to be <span class="math inline">\(1\)</span> if <span
+class="math inline">\(b&#39; = b\)</span>, and <span
+class="math inline">\(0\)</span> otherwise.</li>
+</ol>
+</blockquote>
+<p>当 <span
+class="math inline">\(\text{Pr}[\text{KEM}^{\text{cca}}_{\mathcal{A},\Pi(n)}=1]\leq
+\frac12+\text{negl}(n)\)</span>，称其为 CCA-secure。</p>
+<p>如果 <span class="math inline">\(\Pi\)</span> 是 CCA-secure 的，
+<span class="math inline">\(\Pi&#39;\)</span> 是 CCA-secure 的，那么
+<span class="math inline">\(\Pi^{\text{hy}}\)</span> 是 CCA-secure
+的。（证明 skip）</p>
+<hr />
+<h3 id="cdhddh-based-encryption">CDH/DDH-Based Encryption</h3>
+<p>The El Gamal encryption scheme 的构造如下</p>
+<blockquote>
+<p>Let <span class="math inline">\(\mathcal G\)</span> be a
+polynomial-time algorithm that takes as input <span
+class="math inline">\(1^n\)</span> and (except possibly with negligible
+probability) outputs a description of a cyclic group <span
+class="math inline">\(\mathbb G\)</span>, its order <span
+class="math inline">\(q\)</span> (with <span
+class="math inline">\(||q||=n\)</span>), and a generator <span
+class="math inline">\(g\)</span>. Define a public-key encryption scheme
+as follows:</p>
+<ul>
+<li><span class="math inline">\(\text{Gen}\)</span>: on input <span
+class="math inline">\(1^n\)</span> run <span
+class="math inline">\(\mathcal G(1^n)\)</span> to obtain <span
+class="math inline">\((\mathbb G, q, g)\)</span>. Then choose a uniform
+<span class="math inline">\(x\in \mathbb{Z}_q\)</span> and compute <span
+class="math inline">\(h:=g^x\)</span>. The public key is <span
+class="math inline">\(\langle \mathbb G, q, g, h\rangle\)</span> and the
+private key is <span class="math inline">\(\langle \mathbb G, q, g,
+x\rangle\)</span> . The message space is <span
+class="math inline">\(\mathbb G\)</span>.</li>
+<li><span class="math inline">\(\text{Enc}\)</span>: on input a public
+key <span class="math inline">\(pk = \langle\mathbb G, q, g,
+h\rangle\)</span> and a message <span class="math inline">\(m\in \mathbb
+G\)</span>, choose a uniform <span class="math inline">\(y\in
+\mathbb{Z}_q\)</span> and output the ciphertext <span
+class="math display">\[\langle g^y, h^y\cdot m\rangle\]</span></li>
+<li><span class="math inline">\(\text{Dec}\)</span>: on input a private
+key <span class="math inline">\(sk = \langle\mathbb G, q, g,
+x\rangle\)</span> and a ciphertext <span class="math inline">\(\langle
+c_1, c_2\rangle\)</span> , output <span class="math display">\[\hat m :=
+c_2/c_1^x\]</span></li>
+</ul>
+</blockquote>
+<p>如果 DDH problem 对于 <span class="math inline">\(\mathcal G\)</span>
+是难的，那么它是 CPA-secure 的。（证明 skip）</p>
+<p>可以将 El Gamal encryption scheme 用于 KEM，可以使用一个哈希函数
+<span class="math inline">\(H\)</span> 将 <span
+class="math inline">\(m\)</span> 映射到一个01串，将 <span
+class="math inline">\(H(m)\)</span>
+作为密钥。其实还有更简便的做法，实际上 <span
+class="math inline">\(g^{xy}\)</span> 也是无法区分的，可以直接将 <span
+class="math inline">\(H(g^{xy})\)</span> 作为密钥。</p>
+<p>下面给出具体细节（DDH-Based Key Encapsulation）</p>
+<blockquote>
+<p>Let G be as in the previous section. Define a KEM as follows:</p>
+<ul>
+<li><span class="math inline">\(\text{Gen}\)</span>: on input <span
+class="math inline">\(1^n\)</span> run <span
+class="math inline">\(\mathcal G(1^n)\)</span> to obtain <span
+class="math inline">\((\mathbb G, q, g)\)</span>. choose a uniform <span
+class="math inline">\(x\in \mathbb{Z}_q\)</span> and set <span
+class="math inline">\(h:=g^x\)</span>. Also specify a function <span
+class="math inline">\(H:G\to \{0, 1\}^{\ell(n)}\)</span> for some
+function <span class="math inline">\(\ell\)</span> (see text). The
+public key is <span class="math inline">\(\langle \mathbb G, q, g, h,
+H\rangle\)</span> and the private key is <span
+class="math inline">\(\langle \mathbb G, q, g, x\rangle\)</span>.</li>
+<li><span class="math inline">\(\text{Encaps}\)</span>: on input a
+public key <span class="math inline">\(pk = \langle \mathbb G, q, g, h,
+H\rangle\)</span> , choose a uniform <span
+class="math inline">\(y\in\mathbb{Z}_q\)</span> and output the
+ciphertext <span class="math inline">\(g^y\)</span> and the key <span
+class="math inline">\(H(h^y)\)</span>.</li>
+<li><span class="math inline">\(\text{Decaps}\)</span>: on input a
+private key <span class="math inline">\(sk =\langle \mathbb G, q, g,
+x\rangle\)</span> and a ciphertext <span class="math inline">\(c\in
+\mathbb G\)</span>, output the key <span
+class="math inline">\(H(c^x)\)</span>.</li>
+</ul>
+</blockquote>
+<p>同样，可以证明，如果 DDH problem 对于 <span
+class="math inline">\(\mathcal G\)</span> 是难的，那么它是 CPA-secure
+KEM。</p>
+<p>（后面还有两小节，先 skip）</p>
+<hr />
+<h3 id="rsa-based-encryption">RSA-Based Encryption</h3>
+<p>plain RSA 是不安全的。</p>
+<p><strong>Padded RSA</strong></p>
+<blockquote>
+<p>Let <span class="math inline">\(\text{GenRSA}\)</span> be as before,
+and let <span class="math inline">\(\ell\)</span> be a function with
+<span class="math inline">\(\ell(n) &lt; 2n\)</span>. Define a
+public-key encryption scheme as follows:</p>
+<ul>
+<li><span class="math inline">\(\text{Gen}\)</span>: on input <span
+class="math inline">\(1^n\)</span>, run <span
+class="math inline">\(\text{GenRSA}(1^n)\)</span> to obtain <span
+class="math inline">\((N, e, d)\)</span>. Output the public key <span
+class="math inline">\(pk=\langle N, e\rangle\)</span>, and the private
+key <span class="math inline">\(sk = \langle N, d\rangle\)</span>.</li>
+<li><span class="math inline">\(\text{Enc}\)</span>: on input a public
+key <span class="math inline">\(pk=\langle N, e\rangle\)</span> and a
+message <span class="math inline">\(m\in\{0,
+1\}^{||N||−\ell(n)−1}\)</span>, choose a uniform string <span
+class="math inline">\(r\in\{0, 1\}^{\ell(n)}\)</span> and interpret
+<span class="math inline">\(\hat m := r||m\)</span> as an element of
+<span class="math inline">\(\mathbb{Z}^∗_N\)</span>. Output the
+ciphertext <span class="math display">\[c:=[\hat m^e \mod
+N]\]</span></li>
+<li><span class="math inline">\(\text{Dec}\)</span>: on input a private
+key <span class="math inline">\(sk = \langle N, d\rangle\)</span> and a
+ciphertext <span class="math inline">\(c\in Z^∗_N\)</span>, compute
+<span class="math display">\[\hat m:=[c^d \mod N]\]</span>, and output
+the <span class="math inline">\(||N||−\ell(n)−1\)</span>
+least-significant bits of <span class="math inline">\(\hat
+m\)</span>.</li>
+</ul>
+</blockquote>
+<p><strong>RSA PKCS #1 v1.5</strong> 全称 RSA Laboratories Public-Key
+Cryptography Standard (PKCS) #1 version 1.5</p>
+<p>对于公钥 <span class="math inline">\(pk=\langle N, e\rangle\)</span>,
+令整数 <span class="math inline">\(k\)</span> 满足 <span
+class="math inline">\(2^{8(k-1)}\leq N&lt;
+2^{8k}\)</span>，消息长度范围是从 <span class="math inline">\(1\)</span>
+到 <span class="math inline">\(k-11\)</span>，加密方式如下 <span
+class="math display">\[[(\text{0x00}||\text{0x01}||r||\text{0x00}||m)^e\mod
+N]\]</span> 其中 <span class="math inline">\(r\)</span>
+是一个随机的，长度为 <span class="math inline">\(k-D-3\)</span> byte
+的，每一个 byte 都不为 <span class="math inline">\(\text{0x00}\)</span>
+的串。</p>
+<p>不幸的是，PKCS #1 v1.5 不是 CPA-secure，因为它允许使用过短的随机串
+<span class="math inline">\(r\)</span>。因此我们需要保证 <span
+class="math inline">\(r\)</span> 的长度至少为 <span
+class="math inline">\(||N||/e\)</span>。但是，它会受到选择密文攻击。</p>
+<p>（skip）</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/crypto/" rel="tag"># crypto</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2024/06/30/modern-crypto-11/" rel="prev" title="Introduction to Modern Cryptography(11)">
+      <i class="fa fa-chevron-left"></i> Introduction to Modern Cryptography(11)
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2024/07/01/modern-crypto-13/" rel="next" title="Introduction to Modern Cryptography(13)">
+      Introduction to Modern Cryptography(13) <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#introduction-to-modern-cryptography-reading-notes"><span class="nav-number">1.</span> <span class="nav-text">Introduction
+to Modern Cryptography Reading Notes</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#public-key-encryption"><span class="nav-number">1.1.</span> <span class="nav-text">12 Public-Key Encryption</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9A%E4%B9%89"><span class="nav-number">1.1.1.</span> <span class="nav-text">定义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B7%B7%E5%90%88%E5%8A%A0%E5%AF%86"><span class="nav-number">1.1.2.</span> <span class="nav-text">混合加密</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#cdhddh-based-encryption"><span class="nav-number">1.1.3.</span> <span class="nav-text">CDH&#x2F;DDH-Based Encryption</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#rsa-based-encryption"><span class="nav-number">1.1.4.</span> <span class="nav-text">RSA-Based Encryption</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Louhc</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">21</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Louhc</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+</body>
+</html>

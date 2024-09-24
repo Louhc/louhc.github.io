@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"louhc.github.io","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="Introduction to Modern Cryptography Reading Notes 9 Number Theory and Cryptographic Hardness Assumptions 关于群论的部分全部跳过。 离散对数问题和 CDH&#x2F;DDH 用 \(\mathcal G\) 表示一个通用的、多项式时间的群生成算法，输入 \(1^n\)，输出一个阶为 \(q\">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Introduction to Modern Cryptography(9) 数论基础">
+<meta property="og:url" content="https://louhc.github.io/2024/06/30/modern-crypto-9/index.html">
+<meta property="og:site_name" content="Hello, I&#39;m Louhc">
+<meta property="og:description" content="Introduction to Modern Cryptography Reading Notes 9 Number Theory and Cryptographic Hardness Assumptions 关于群论的部分全部跳过。 离散对数问题和 CDH&#x2F;DDH 用 \(\mathcal G\) 表示一个通用的、多项式时间的群生成算法，输入 \(1^n\)，输出一个阶为 \(q\">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2024-06-30T00:01:22.000Z">
+<meta property="article:modified_time" content="2024-09-24T12:31:31.425Z">
+<meta property="article:author" content="Louhc">
+<meta property="article:tag" content="crypto">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://louhc.github.io/2024/06/30/modern-crypto-9/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Introduction to Modern Cryptography(9) 数论基础 | Hello, I'm Louhc</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Hello, I'm Louhc</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://louhc.github.io/2024/06/30/modern-crypto-9/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Louhc">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hello, I'm Louhc">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Introduction to Modern Cryptography(9) 数论基础
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-06-29 16:01:22" itemprop="dateCreated datePublished" datetime="2024-06-29T16:01:22-08:00">2024-06-29</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-09-24 04:31:31" itemprop="dateModified" datetime="2024-09-24T04:31:31-08:00">2024-09-24</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Reading-Notes/" itemprop="url" rel="index"><span itemprop="name">Reading Notes</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1
+id="introduction-to-modern-cryptography-reading-notes"><em>Introduction
+to Modern Cryptography</em> Reading Notes</h1>
+<h2 id="number-theory-and-cryptographic-hardness-assumptions">9 Number
+Theory and Cryptographic Hardness Assumptions</h2>
+<p>关于群论的部分全部跳过。</p>
+<h3 id="离散对数问题和-cdhddh">离散对数问题和 CDH/DDH</h3>
+<p>用 <span class="math inline">\(\mathcal G\)</span>
+表示一个通用的、多项式时间的群生成算法，输入 <span
+class="math inline">\(1^n\)</span>，输出一个阶为 <span
+class="math inline">\(q\)</span>（其中 <span
+class="math inline">\(||q||=n\)</span>） 的循环群 <span
+class="math inline">\(\mathbb G\)</span>
+的<strong>描述（description）</strong>和它的一个生成元 <span
+class="math inline">\(g\)</span>。它将 <span
+class="math inline">\(\mathbb G\)</span>
+的每个元素都表示为一个比特串，并且要求存在多项式时间算法，能够验证一个任意比特串是否对应着
+<span class="math inline">\(\mathbb G\)</span>
+中的一个元素，能执行群运算（我的理解是，输入两个对应着 <span
+class="math inline">\(g_1,g_2\in\mathbb G\)</span> 的比特串，能计算
+<span class="math inline">\(g_1\circ g_2\)</span>
+对应的比特串）。虽然所有阶为 <span class="math inline">\(q\)</span>
+的循环群都是同构的，但是不同的描述可能会导致不同的计算复杂度。</p>
+<p>对于 <span class="math inline">\(g\in\mathbb
+G\)</span>，存在一个唯一的 <span
+class="math inline">\(x\in\mathbb{Z}_q\)</span> 使得 <span
+class="math inline">\(g^x=h\)</span>，称 <span
+class="math inline">\(x\)</span> 是 <span
+class="math inline">\(h\)</span> 关于 <span
+class="math inline">\(g\)</span> 的<strong>离散对数（discrete
+logarithm）</strong>。注意如果 <span
+class="math inline">\(g^{x&#39;}=h\)</span>，那么 <span
+class="math inline">\(\log_gh=[x&#39;\mod q]\)</span>。</p>
+<p>我们和之前一样用测试的方式定义<strong>离散对数问题（discrete-logarithm
+problem）</strong></p>
+<blockquote>
+<p>The discrete-logarithm experiment <span
+class="math inline">\(\text{DLog}_{\mathcal{A},\mathcal
+G(n)}\)</span>:</p>
+<ol type="1">
+<li>Run <span class="math inline">\(\mathcal G(1^n)\)</span> to obtain
+<span class="math inline">\((\mathbb G, q, g)\)</span>, where <span
+class="math inline">\(\mathbb G\)</span> is a cyclic group of order
+<span class="math inline">\(q\)</span> (with <span
+class="math inline">\(|q|=n\)</span>), and <span
+class="math inline">\(g\)</span> is a generator of <span
+class="math inline">\(\mathbb G\)</span>.</li>
+<li>Choose a uniform <span class="math inline">\(h\in\mathbb
+G\)</span>.</li>
+<li><span class="math inline">\(\mathcal{A}\)</span> is given <span
+class="math inline">\(\mathbb G, q, g, h\)</span>, and outputs <span
+class="math inline">\(x\in\mathbb{Z}_q\)</span>.</li>
+<li>The output of the experiment is defined to be <span
+class="math inline">\(1\)</span> if <span
+class="math inline">\(g^x=h\)</span>, and <span
+class="math inline">\(0\)</span> otherwise.</li>
+</ol>
+</blockquote>
+<p>根据上下文，书中的 <span class="math inline">\(\mathcal G\)</span>
+是一个随机算法。如果 <span class="math inline">\(\mathcal G\)</span>
+是确定性的，或者 <span class="math inline">\(\mathcal G\)</span>
+的随机性被 <span class="math inline">\(\mathcal{A}\)</span>
+所知，会发生什么事，我还没有想清楚。</p>
+<p>如果对于任意的 PPT 算法 <span
+class="math inline">\(\mathcal{A}\)</span>，都有 <span
+class="math inline">\(\text{Pr}[\text{DLog}_{\mathcal{A},\mathcal
+G(n)}=1]\leq\text{negl}(n)\)</span>，则称离散对数问题是难的（relative to
+<span class="math inline">\(\mathcal
+G\)</span>）。而<strong>离散对数假设</strong>就是存在一个 <span
+class="math inline">\(\mathcal G\)</span> 使得离散对数问题是难的。</p>
+<p><strong>The Diffie–Hellman problems</strong>
+与离散对数相关但不（被认为）等价，有两个重要的变体 <strong>computational
+Diffie–Hellman (CDH) problem</strong> 和 <strong>decisional
+Diffie–Hellman (DDH) problem</strong>。</p>
+<p>定义函数 <span
+class="math inline">\(\text{DH}(h_1,h_2)=g^{\log_{g}h_1\cdot\log_{g}h_2}\)</span>。</p>
+<p><strong>CDH</strong> 问题就是对于 <span
+class="math inline">\(h_1,h_2\)</span> 求解 <span
+class="math inline">\(\text{DH}(h_1,h_2)\)</span>。如果离散对数问题关于
+<span class="math inline">\(\mathcal G\)</span> 是难的，那么 CDH
+问题关于 <span class="math inline">\(\mathcal G\)</span>
+也是难的。反过来是否成立还不清楚。</p>
+<p><strong>DDH</strong> 问题就是区分 <span
+class="math inline">\(\text{DH}(h_1,h_2)\)</span> 和均匀随机数。如果
+<span class="math display">\[|\text{Pr}[\mathcal{A}(\mathbb
+G,q,g,g^x,g^y,g^z)]-\text{Pr}[\mathcal{A}(\mathbb
+G,q,g,g^x,g^y,g^{xy})]|\leq\text{negl}(n)\]</span> 则称 DDH 关于 <span
+class="math inline">\(\mathcal G\)</span> 是难的。</p>
+<p>CDH 难可以推出 DDH 难，但是反过来不（被认为）行。</p>
+<p>通常选取群的时候，我们更偏好素阶群，理由先 skip。</p>
+<hr />
+<h3 id="椭圆曲线-elliptic-curves">椭圆曲线 Elliptic Curves</h3>
+<p>还不存在椭圆曲线群上解决 the discrete-logarithm problem
+的亚指数算法。</p>
+<p>椭圆曲线的定义（Weierstrass representation）：</p>
+<p><span
+class="math display">\[E[\mathbb{Z}_p]\overset{\text{def}}{=}\{(x,y)\,|\,x,y\in\mathbb{Z}_p\text{
+and }y^2=x^3+Ax+B\mod p\}\cup\{\mathcal O\}\]</span></p>
+<p>其中 <span class="math inline">\(\mathcal O\)</span> 表示 point at
+infinity。</p>
+<ul>
+<li><span class="math inline">\(\mathcal O\)</span> 是 <span
+class="math inline">\(E[\mathbb{Z}_p]\)</span> 的零元，<span
+class="math inline">\(\forall P\in E[\mathbb{Z}_p],P+\mathcal O=\mathcal
+O+P=P\)</span>。</li>
+<li>对于 <span class="math inline">\(P_1,P_2\in
+E[\mathbb{Z}_p]\)</span>，<span class="math inline">\(P_1+P_2\)</span>
+取决于 <span class="math inline">\(P_1\)</span> 和 <span
+class="math inline">\(P_2\)</span> 连线（如果 <span
+class="math inline">\(P_1\)</span> 和 <span
+class="math inline">\(P_2\)</span>
+相等，那么就取切线）与曲线的第三个交点 <span
+class="math inline">\(P_3=(x,y)\)</span> 或 <span
+class="math inline">\(\mathcal O\)</span>，若 <span
+class="math inline">\(P_3\neq\mathcal O\)</span>，<span
+class="math inline">\(P_1+P_2=(x,-y)\)</span>，否则 <span
+class="math inline">\(P_1+P_2=\mathcal O\)</span>。</li>
+<li><span class="math inline">\(\forall P\in
+E[\mathbb{Z}_p]\)</span>，若 <span class="math inline">\(P=\mathcal
+O\)</span>，<span class="math inline">\(-P=\mathcal O\)</span>；若 <span
+class="math inline">\(P=(x,y)\)</span>，<span
+class="math inline">\(-P=(x,-y)\)</span>。</li>
+</ul>
+<p>通过一些复杂的运算可以证明 <span
+class="math inline">\(E[\mathbb{Z}_p]\)</span>
+满足加法结合律，因此是阿贝尔群。</p>
+<p>除了 Weierstrass representation，还可以使用 <strong>Montgomery
+representation</strong></p>
+<p><span class="math display">\[
+By^2=x^3+Ax^2+x\mod p
+\]</span></p>
+<p>需要注意的是，不是所有椭圆曲线都能写成 Montgomery representation
+的形式，通过 Montgomery representation 构造的椭圆曲线群的阶都是 <span
+class="math inline">\(4\)</span> 的倍数。</p>
+<p>还有 <strong>Twisted Edwards representation</strong></p>
+<p><span class="math display">\[ax^2+y^2=1+dx^2y^2\mod p\]</span></p>
+<p>当 <span class="math inline">\(a=1\)</span> 时称为 Edwards
+representation。Twisted Edwards representation 和 Montgomery
+representation 能表示的椭圆曲线集合是一样的。</p>
+<p>用 Twisted Edwards representation 构造椭圆曲线群时，<span
+class="math inline">\(\mathcal O=(0,1)\)</span>。另外，如果 <span
+class="math inline">\(a\)</span> 是 <span
+class="math inline">\(p\)</span> 的二次剩余，而 <span
+class="math inline">\(d\)</span> 不是时， <span
+class="math display">\[P_1+P_2=(\frac{x_1y_2+x_2y_1}{1+dx_1x_2y_1y_2},\frac{y_1y_2-ax_1x_2}{1-dx_1x_2y_1y_2})\]</span>。</p>
+<p><strong>Hasse Bound</strong> 对于质数 <span
+class="math inline">\(p\)</span>, <span class="math inline">\(p+1-2\sqrt
+p\leq |E[\mathbb{Z}_p]|\leq p+1+2\sqrt p\)</span></p>
+<p>并不是每个椭圆曲线群对于 the discrete-logarithm problem
+都是难的，实际使用中并不会自行生成一个椭圆曲线，而是使用 NIST
+等组织推荐使用的椭圆曲线群。</p>
+<p>(skip)</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/crypto/" rel="tag"># crypto</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2024/06/30/modern-crypto-8/" rel="prev" title="Introduction to Modern Cryptography(8)">
+      <i class="fa fa-chevron-left"></i> Introduction to Modern Cryptography(8)
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2024/06/30/modern-crypto-10/" rel="next" title="Introduction to Modern Cryptography(10)">
+      Introduction to Modern Cryptography(10) <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#introduction-to-modern-cryptography-reading-notes"><span class="nav-number">1.</span> <span class="nav-text">Introduction
+to Modern Cryptography Reading Notes</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#number-theory-and-cryptographic-hardness-assumptions"><span class="nav-number">1.1.</span> <span class="nav-text">9 Number
+Theory and Cryptographic Hardness Assumptions</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A6%BB%E6%95%A3%E5%AF%B9%E6%95%B0%E9%97%AE%E9%A2%98%E5%92%8C-cdhddh"><span class="nav-number">1.1.1.</span> <span class="nav-text">离散对数问题和 CDH&#x2F;DDH</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A4%AD%E5%9C%86%E6%9B%B2%E7%BA%BF-elliptic-curves"><span class="nav-number">1.1.2.</span> <span class="nav-text">椭圆曲线 Elliptic Curves</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Louhc</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">21</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Louhc</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+</body>
+</html>

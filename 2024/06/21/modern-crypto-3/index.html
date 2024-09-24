@@ -1,0 +1,1009 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"louhc.github.io","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="Introduction to Modern Cryptography Reading Notes 3 Private-Key Encryption 具体安全和渐进安全 安全有两种定义，具体的(concrete)和渐进的(asymasymptotic)。简单地说，具体安全依靠具体的数值，而渐进安全依靠关于 \(n\) 的函数。 对于具体安全的定义  A scheme is \((t">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Introduction to Modern Cryptography(3) 私钥加密">
+<meta property="og:url" content="https://louhc.github.io/2024/06/21/modern-crypto-3/index.html">
+<meta property="og:site_name" content="Hello, I&#39;m Louhc">
+<meta property="og:description" content="Introduction to Modern Cryptography Reading Notes 3 Private-Key Encryption 具体安全和渐进安全 安全有两种定义，具体的(concrete)和渐进的(asymasymptotic)。简单地说，具体安全依靠具体的数值，而渐进安全依靠关于 \(n\) 的函数。 对于具体安全的定义  A scheme is \((t">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2024-06-21T08:00:00.000Z">
+<meta property="article:modified_time" content="2024-09-24T12:31:31.405Z">
+<meta property="article:author" content="Louhc">
+<meta property="article:tag" content="crypto">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://louhc.github.io/2024/06/21/modern-crypto-3/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Introduction to Modern Cryptography(3) 私钥加密 | Hello, I'm Louhc</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Hello, I'm Louhc</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://louhc.github.io/2024/06/21/modern-crypto-3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Louhc">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hello, I'm Louhc">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Introduction to Modern Cryptography(3) 私钥加密
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-06-21 00:00:00" itemprop="dateCreated datePublished" datetime="2024-06-21T00:00:00-08:00">2024-06-21</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-09-24 04:31:31" itemprop="dateModified" datetime="2024-09-24T04:31:31-08:00">2024-09-24</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Reading-Notes/" itemprop="url" rel="index"><span itemprop="name">Reading Notes</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1
+id="introduction-to-modern-cryptography-reading-notes"><em>Introduction
+to Modern Cryptography</em> Reading Notes</h1>
+<h2 id="private-key-encryption">3 Private-Key Encryption</h2>
+<h3 id="具体安全和渐进安全">具体安全和渐进安全</h3>
+<p><strong>安全</strong>有两种定义，<strong>具体的(concrete)</strong>和<strong>渐进的(asymasymptotic)</strong>。简单地说，具体安全依靠具体的数值，而渐进安全依靠关于
+<span class="math inline">\(n\)</span> 的函数。</p>
+<p>对于<strong>具体安全</strong>的定义</p>
+<blockquote>
+<p>A scheme is <span class="math inline">\((t,
+\varepsilon)\)</span>-secure if any adversary running for time at most
+<span class="math inline">\(t\)</span> succeeds in breaking the scheme
+with probability at most <span
+class="math inline">\(\varepsilon\)</span>.</p>
+</blockquote>
+<p>在实际运用密码系统时往往需要一个<em>具体的</em>安全保障。</p>
+<p>我们将 <em>efficient adversaries</em>
+视为多项式时间随机算法(<em>randomized algorithms running in time
+polynomial in <span class="math inline">\(n\)</span></em>)；将 <em>small
+probabilities of success</em> 视为不大于某一多项式的倒数(<em>success
+probabilities smaller than any inverse polynomial in <span
+class="math inline">\(n\)</span></em>)，这样的概率成为<strong>可忽略的(negligible)</strong>。</p>
+<p><em>PPT</em> 表示 <em>probabilistic polynomial-time</em>。</p>
+<p>对<strong>渐进安全</strong>进行定义：</p>
+<blockquote>
+<p>A scheme is secure if any PPT adversary succeeds in breaking the
+scheme with at most negligible probability.</p>
+</blockquote>
+<p>通过对参数进行取值，可以由渐进安全得到具体安全。</p>
+<hr />
+<h3 id="密钥加密及其安全定义">密钥加密及其安全定义</h3>
+<p><strong>private-key encryption</strong> 的定义：</p>
+<blockquote>
+<p>A private-key encryption scheme consists of three probabilistic
+polynomial-time algorithms (Gen, Enc, Dec) such that:</p>
+<ol type="1">
+<li>The key-generation algorithm Gen takes as input <span
+class="math inline">\(1^n\)</span> (i.e., the security parameter written
+in unary) and outputs a key <span class="math inline">\(k\)</span>; we
+write <span class="math inline">\(k \leftarrow
+\mathrm{Gen}(1^n)\)</span> (emphasizing that Gen is a randomized
+algorithm). We assume without loss of generality that any key <span
+class="math inline">\(k\)</span> output by <span
+class="math inline">\(\mathrm{Gen}(1^n)\)</span> satisfies <span
+class="math inline">\(|k| \geq n\)</span>.</li>
+<li>The encryption algorithm Enc takes as input a key <span
+class="math inline">\(k\)</span> and a plaintext message <span
+class="math inline">\(m \in \{0, 1\}^*\)</span>, and outputs a
+ciphertext <span class="math inline">\(c\)</span>. Since Enc may be
+randomized, we write this as <span class="math inline">\(c \leftarrow
+\mathrm{Enc}_k(m)\)</span>.</li>
+<li>The decryption algorithm Dec takes as input a key <span
+class="math inline">\(k\)</span> and a ciphertext <span
+class="math inline">\(c\)</span>, and outputs a message <span
+class="math inline">\(m \in \{0, 1\}^*\)</span> or an error. We denote a
+generic error by the symbol <span
+class="math inline">\(\perp\)</span>.</li>
+</ol>
+</blockquote>
+<p>上面的定义是<strong>无记忆的(stateless)</strong>，即每次 Enc
+都与之前的 Enc 无关。</p>
+<p>攻击者无法区分试验 <em>The adversarial indistinguishability
+experiment</em> <span
+class="math inline">\(\mathrm{PrivK}^{\mathrm{eav}}_{\mathcal
+A,\Sigma}(n)\)</span>，给定明文 <span
+class="math inline">\(m_0,m_1\)</span> 和密文 <span
+class="math inline">\(c\)</span>，攻击者无法辨别 <span
+class="math inline">\(c\)</span> 是由 <span
+class="math inline">\(m_0\)</span> 还是 <span
+class="math inline">\(m_1\)</span> 加密而来的。定义如下：</p>
+<blockquote>
+<ol type="1">
+<li>The adversary <span class="math inline">\(\mathcal A\)</span> is
+given input <span class="math inline">\(1^n\)</span>, and outputs a pair
+of messages <span class="math inline">\(m_0, m_1\)</span> with <span
+class="math inline">\(|m_0| = |m_1|\)</span>.</li>
+<li>A key <span class="math inline">\(k\)</span> is generated by running
+<span class="math inline">\(\mathrm{Gen}(1^n)\)</span>, and a uniform
+bit <span class="math inline">\(b \in \{0, 1\}\)</span> is chosen.
+Ciphertext <span class="math inline">\(c \leftarrow
+\mathrm{Enc}_k(m_b)\)</span> is computed and given to <span
+class="math inline">\(\mathcal A\)</span>. We refer to <span
+class="math inline">\(c\)</span> as the challenge ciphertext.</li>
+<li><span class="math inline">\(\mathcal A\)</span> outputs a bit <span
+class="math inline">\(b&#39;\)</span>.</li>
+<li>The output of the experiment is defined to be <span
+class="math inline">\(1\)</span> if <span
+class="math inline">\(b&#39;=b\)</span>, and <span
+class="math inline">\(0\)</span> otherwise. If <span
+class="math inline">\(\mathrm{PrivK}^{\mathrm{eav}}_{\mathcal
+A,\Sigma}(n)=1\)</span>, we say that <span
+class="math inline">\(\mathcal A\)</span> succeeds.</li>
+</ol>
+</blockquote>
+<p>攻击者无法以超过 <span
+class="math inline">\(\frac12+\mathrm{negl}(n)\)</span>
+的概率通过试验，这种性质称为<em>不可分辨(indistinguishability)</em>。</p>
+<blockquote>
+<p>A private-key encryption scheme <span class="math inline">\(\Sigma =
+(\mathrm{Gen}, \mathrm{Enc}, \mathrm{Dec})\)</span> has
+indistinguishable encryptions in the presence of an eavesdropper, or is
+EAV-secure, if for all probabilistic polynomial-time adversaries <span
+class="math inline">\(\mathcal A\)</span> there is a negligible function
+<span class="math inline">\(\mathrm{negl}\)</span> such that, for all
+<span class="math inline">\(n\)</span>, <span
+class="math display">\[\mathrm{Pr}[\mathrm{PrivK}^{\mathrm{eav}}_{\mathcal
+A,\Sigma}(n)=1]\leq \frac12+\mathrm{negl}(n)\]</span></p>
+</blockquote>
+<p>一个等价的定义是，当给攻击者的密文是 <span
+class="math inline">\(\mathrm{Enc}(m_0)\)</span> 或 <span
+class="math inline">\(\mathrm{Enc}(m_1)\)</span> 时，行为相同（<span
+class="math inline">\(|\mathrm{Pr}[\mathrm{Output_0}=1]-\mathrm{Pr}[\mathrm{Output_1}=1]|\leq\mathrm{negl}(n)\)</span>）。</p>
+<p>接下来书上由indistinguishability推出两个较弱的结论。懒得抄了。</p>
+<p><strong>语义安全(semantic security)</strong>的定义</p>
+<blockquote>
+<p>A private-key encryption scheme <span
+class="math inline">\((\text{Enc}, \text{Dec})\)</span> is
+<em>semantically secure in the presence of an eavesdropper</em> if for
+every PPT algorithm <span class="math inline">\(\mathcal{A}\)</span>
+there exists a PPT algorithm <span
+class="math inline">\(\mathcal{A}&#39;\)</span> such that for any PPT
+algorithm <span class="math inline">\(\mathrm{Samp}\)</span> and
+polynomial-time computable functions <span
+class="math inline">\(f\)</span> and <span
+class="math inline">\(h\)</span>, the following is negligible: <span
+class="math display">\[|\text{Pr}[\mathcal{A}(1^n,\text{Enc}_k(m),h(m))=f(m)]-\text{Pr}[\mathcal{A}&#39;(1^n,|m|,h(m))=f(m)]|\]</span>,
+where the first probability is taken over <span
+class="math inline">\(m\)</span> output by <span
+class="math inline">\(\mathrm{Samp}(1^n)\)</span>, uniform choice of
+<span class="math inline">\(k \in \{0, 1\}^n\)</span>, and the
+randomness of Enc and <span class="math inline">\(\mathcal A\)</span>,
+and the second probability is taken over <span
+class="math inline">\(m\)</span> output by <span
+class="math inline">\(\mathrm{Samp}(1^n)\)</span> and the randomness of
+<span class="math inline">\(\mathcal A&#39;\)</span>.</p>
+</blockquote>
+<p>直观地说，这个定义描述了 <span
+class="math inline">\(\mathrm{Enc}_k(m)\)</span> 不表露 <span
+class="math inline">\(|m|\)</span> 以外的任何信息。</p>
+<p>semantic secure 和 indistinguishability(EAV-secure) 是等价的。</p>
+<hr />
+<h3 id="伪随机">伪随机</h3>
+<p><strong>伪随机(pseudorandom)</strong>是真随机的一个 computational
+relaxation，即弱化了一些条件的真随机。</p>
+<p>伪随机的定义：</p>
+<blockquote>
+<p>Let <span class="math inline">\(\mathcal G\)</span> be a
+deterministic polynomial-time algorithm such that for any <span
+class="math inline">\(n\)</span> and any input <span
+class="math inline">\(s \in \{0, 1\}^n\)</span>, the result <span
+class="math inline">\(\mathcal G(s)\)</span> is a string of length <span
+class="math inline">\(\mathcal l(n)\)</span>. <span
+class="math inline">\(\mathcal G\)</span> is a pseudorandom generator if
+the following conditions hold:</p>
+<ol type="1">
+<li>(Expansion.) For every <span class="math inline">\(n\)</span> it
+holds that <span class="math inline">\(\mathcal l(n) &gt;
+n\)</span>.</li>
+<li>(Pseudorandomness.) For any PPT algorithm <span
+class="math inline">\(\mathcal D\)</span>, there is a negligible
+function <span class="math inline">\(\mathrm{negl}\)</span> such that
+<span class="math display">\[|\mathrm{Pr}[\mathcal D(\mathcal G(s)) = 1]
+− \mathrm{Pr}[\mathcal D(r) = 1]| \leq \mathrm{negl}(n)\]</span>, where
+the first probability is taken over uniform choice of <span
+class="math inline">\(s \in \{0, 1\}^n\)</span> and the randomness of
+<span class="math inline">\(\mathcal D\)</span>, and the second
+probability is taken over uniform choice of <span
+class="math inline">\(r \in \{0, 1\}^{\mathcal l(n)}\)</span> and the
+randomness of <span class="math inline">\(\mathcal D\)</span>.</li>
+</ol>
+</blockquote>
+<p>称 <span class="math inline">\(\mathcal l(n)\)</span> 为 <span
+class="math inline">\(\mathcal G\)</span> 的<strong>扩张因子(expansion
+factor)</strong>。</p>
+<p>我们有比较强的理由相信，对于任意多项式扩张因子，都存在伪随机算法。（应该理解为，当
+<span class="math inline">\(n\)</span> 大于某个足够大的数 <span
+class="math inline">\(N\)</span> 时，都有满足条件的伪随机算法）</p>
+<hr />
+<h3 id="多次加密">多次加密</h3>
+<p>之前只讨论了窃听者只窃听到一个密文的情况，接下来考虑 Multiple
+Encryption，即需要多次传输密文的情况。</p>
+<blockquote>
+<p>The multiple-message eavesdropping experiment <span
+class="math inline">\(\mathrm{PrivK}^{\mathrm{mult}}_{\mathcal
+A,\Pi(n)}\)</span>:</p>
+<ol type="1">
+<li>The adversary <span class="math inline">\(\mathcal A\)</span> is
+given input <span class="math inline">\(1^n\)</span>, and outputs a pair
+of equal-length <strong>lists</strong> of messages <span
+class="math inline">\(\overline{M_0}=(m_{0,1},...,m_{0,t})\)</span> and
+<span class="math inline">\(\overline{M_1} = (m_{1,1},...,
+m_{1,t})\)</span>, with <span
+class="math inline">\(|m_{0,i}|=|m_{1,i}|\)</span> for all <span
+class="math inline">\(i\)</span>.</li>
+<li>A key <span class="math inline">\(k\)</span> is generated by running
+<span class="math inline">\(\mathrm{Gen}(1^n)\)</span>, and a uniform
+bit <span class="math inline">\(b \in \{0, 1\}\)</span> is chosen. For
+all <span class="math inline">\(i\)</span>, the ciphertext <span
+class="math inline">\(c_i \leftarrow \mathrm{Enc}_k(m_{b,i})\)</span> is
+computed and the list <span class="math inline">\(\overline C = (c_1, .
+. . , c_t)\)</span> is given to <span class="math inline">\(\mathcal
+A\)</span>.</li>
+<li><span class="math inline">\(\mathcal A\)</span> outputs a bit <span
+class="math inline">\(b&#39;\)</span>.</li>
+<li>The output of the experiment is defined to be <span
+class="math inline">\(1\)</span> if <span class="math inline">\(b&#39; =
+b\)</span>, and <span class="math inline">\(0\)</span> otherwise.</li>
+</ol>
+</blockquote>
+<p>注意每次加密使用的key都是一样的。</p>
+<p>indistinguishablity 的定义和上面差不多。</p>
+<hr />
+<h3 id="选择密文攻击cpa">选择密文攻击CPA</h3>
+<p>如果 Enc 是关于 <span class="math inline">\(k\)</span> 和 <span
+class="math inline">\(m\)</span> 的确定函数，那么将无法实现
+indistinguishablity。因此我们必须让加密函数随机化。</p>
+<p>在<strong>chosen-plaintext
+attack</strong>中，敌手可以通过一些方式影响被加密的明文。</p>
+<p>对于chosen-plaintext attack，有对应的
+CPA-security，它允许敌手可以<strong>随时</strong>以黑盒的方式调用 <span
+class="math inline">\(\mathrm{Enc}_k\)</span> 函数。</p>
+<blockquote>
+<p>The CPA indistinguishability experiment <span
+class="math inline">\(\mathrm{PrivK}^{\mathrm{cpa}}_{\mathcal
+A,\Pi(n)}\)</span>:</p>
+<ol type="1">
+<li>A key <span class="math inline">\(k\)</span> is generated by running
+<span class="math inline">\(\mathrm{Gen}(1^n)\)</span>.</li>
+<li>The adversary <span class="math inline">\(\mathcal A\)</span> is
+given input <span class="math inline">\(1^n\)</span> and oracle(黑盒)
+access to <span class="math inline">\(\mathrm{Enc}_k(\cdot)\)</span>,
+and outputs a pair of messages <span class="math inline">\(m_0,
+m_1\)</span> of the same length.</li>
+<li>A uniform bit <span class="math inline">\(b \in \{0, 1\}\)</span> is
+chosen, and then a ciphertext <span class="math inline">\(c \leftarrow
+\mathrm{Enc}_k(m_b)\)</span> is computed and given to <span
+class="math inline">\(\mathcal A\)</span>.</li>
+<li>The adversary <span class="math inline">\(\mathcal A\)</span>
+continues to have oracle access to <span
+class="math inline">\(\mathrm{Enc}_k(\cdot)\)</span>, and outputs a bit
+<span class="math inline">\(b&#39;\)</span>.</li>
+<li>The output of the experiment is defined to be <span
+class="math inline">\(1\)</span> if <span class="math inline">\(b&#39; =
+b\)</span>, and <span class="math inline">\(0\)</span> otherwise. In the
+former case, we say that <span class="math inline">\(\mathcal A\)</span>
+succeeds.</li>
+</ol>
+</blockquote>
+<p>此时 <span class="math inline">\(\mathrm{Enc}\)</span>
+通常不是一个确定性函数，否则将可以通过将 <span
+class="math inline">\(c\)</span> 与 <span
+class="math inline">\(\text{Enc}(m_0)\)</span> 和 <span
+class="math inline">\(\text{Enc}(m_1)\)</span> 对比的方式来区分。</p>
+<blockquote>
+<p>A private-key encryption scheme <span class="math inline">\(\Pi =
+(\mathrm{Gen}, \mathrm{Enc}, \mathrm{Dec})\)</span> has
+indistinguishable encryptions under a chosen-plaintext attack, or is
+CPA-secure, if for all probabilistic polynomial-time adversaries <span
+class="math inline">\(\mathcal A\)</span> there is a negligible function
+<span class="math inline">\(\mathrm{negl}\)</span> such that <span
+class="math display">\[\mathrm{Pr}[\mathrm{PrivK}^{\mathrm{cpa}}_{\mathcal
+A,\Pi(n)}=1]\leq\frac12+\mathrm{negl}(n)\]</span> where the probability
+is taken over the randomness used by <span
+class="math inline">\(\mathcal A\)</span>, as well as the randomness
+used in the experiment.</p>
+</blockquote>
+<p>CPA-security 是当今加密系统需要满足的最小的安全要求。</p>
+<p>我们将使用<strong>LR
+函数(left-or-right)</strong>来定义允许多次加密的安全要求。<span
+class="math inline">\(\mathrm{LR}_{k,b}\)</span>
+是一个黑盒函数，接收两个相同长度的明文 <span
+class="math inline">\(m_0,m_1\)</span>，返回 <span
+class="math inline">\(\mathrm{Enc}_k(m_b)\)</span>。可以通过 LR 函数定义
+LR-oracle experiment。</p>
+<blockquote>
+<p>The LR-oracle experiment <span
+class="math inline">\(\mathrm{PrivK}^{\mathrm{LR-cpa}}_{\mathcal
+A,\Pi(n)}\)</span>:</p>
+<ol type="1">
+<li>A key <span class="math inline">\(k\)</span> is generated by running
+<span class="math inline">\(\mathrm{Gen}(1^n)\)</span>.</li>
+<li>A uniform bit <span class="math inline">\(b \in \{0, 1\}\)</span> is
+chosen.</li>
+<li>The adversary <span class="math inline">\(\mathcal A\)</span> is
+given input <span class="math inline">\(1^n\)</span> and oracle access
+to <span class="math inline">\(\mathrm{LR}_{k,b}(\cdot,
+\cdot)\)</span>,as defined above.</li>
+<li>The adversary <span class="math inline">\(\mathcal A\)</span>
+outputs a bit <span class="math inline">\(b&#39;\)</span>.</li>
+<li>The output of the experiment is defined to be <span
+class="math inline">\(1\)</span> if <span class="math inline">\(b&#39; =
+b\)</span>, and <span class="math inline">\(0\)</span> otherwise. In the
+former case, we say that <span class="math inline">\(\mathcal A\)</span>
+succeeds.</li>
+</ol>
+</blockquote>
+<p>可以通过 LR-oracle experiment 定义 indistinguishable multiple
+encryptions under a chosen-plaintext attack，或者叫 CPA-secure for
+multiple encryptions，和上面差不多就不抄了。</p>
+<p>注意到 CPA-secure for multiple encryptions 比 CPA-secure 和
+indistinguishable multiple encryptions in the presence of an
+eavesdropper 都要强。它和后者的区别是，CPA-secure for multiple
+encryptions 是支持<strong>在测试的任何阶段在线访问</strong>的。</p>
+<p>事实上，CPA-secure 和 CPA-secure for multiple encryptions
+是<strong>等价</strong>的，要证明这一点，只需要证明满足CPA-secure的加密系统也满足CPA-secure
+for multiple encryptions：</p>
+<blockquote>
+<p>Any private-key encryption scheme that is CPA-secure is also
+CPA-secure for multiple encryptions.</p>
+</blockquote>
+<hr />
+<h3 id="伪随机函数">伪随机函数</h3>
+<p><strong>伪随机函数(pseudorandom function)</strong>的定义:</p>
+<blockquote>
+<p>An efficient, length preserving, keyed function <span
+class="math inline">\(F:\{0, 1\}^*\times\{0, 1\}^*\to\{0, 1\}^*\)</span>
+is a pseudorandom function if for all probabilistic polynomial-time
+distinguishers <span class="math inline">\(D\)</span>, there is a
+negligible function <span class="math inline">\(\text{negl}\)</span>
+such that: <span
+class="math display">\[\left|\text{Pr}[D^{F_k(\cdot)}(1^n) = 1] −
+\text{Pr}[D^{f(\cdot)}(1^n) = 1]\right| \leq \text{negl}(n)\]</span>,
+where the first probability is taken over uniform choice of <span
+class="math inline">\(k \in \{0, 1\}^n\)</span> and the randomness of
+<span class="math inline">\(D\)</span>, and the second probability is
+taken over uniform choice of <span class="math inline">\(f \in
+\text{Func}_n\)</span> and the randomness of <span
+class="math inline">\(D\)</span>.</p>
+</blockquote>
+<p>其中 <span class="math inline">\(\text{Func}_n\)</span> 表示 <span
+class="math inline">\(\{0,1\}^*\to\{0,1\}^*\)</span> 的全体函数，<span
+class="math inline">\(F_k:=F(\cdot,k)\)</span>。注意 <span
+class="math inline">\(D\)</span> 并不知道 <span
+class="math inline">\(k\)</span> 的值，只能黑盒(oracle)访问 <span
+class="math inline">\(F_k\)</span>。</p>
+<p><span class="math inline">\(\text{Perm}_n \subset
+\text{Func}_n\)</span> 表示 <span
+class="math inline">\(\text{Func}_n\)</span> 中的
+<strong>permutations</strong> (双射函数)。若对于任意 <span
+class="math inline">\(k\in\{0,1\}^{l_{key}(n)}\)</span>, 都满足 <span
+class="math inline">\(F_k\)</span> 是双射函数，则称 <span
+class="math inline">\(F\)</span> 是一个 <strong>keyed
+permutation</strong>。当 <span class="math inline">\(F\)</span>
+满足<strong>能被高效计算</strong>和<strong>能被高效求逆</strong>（给出
+<span class="math inline">\(k\)</span> 和 <span
+class="math inline">\(y\)</span>,在多项式时间内计算 <span
+class="math inline">\(x\)</span>），才能被称为是高效的(efficient)。</p>
+<p>random function 和 random permutation
+是多项式时间不可区分的，因此如果pseudorandom permutation <span
+class="math inline">\(F\)</span> 满足 <span
+class="math inline">\(l_{in}(n)\geq n\)</span>，那么 <span
+class="math inline">\(F\)</span> 也是 pseudorandom function。</p>
+<p>strong pseudorandom permutation
+要求<strong>在攻击者知道伪随机排列的逆（黑盒调用）的情况下</strong>，仍然不能区分伪随机排列和随机排列。</p>
+<blockquote>
+<p>Let <span class="math inline">\(F : \{0, 1\}^∗ \times \{0, 1\}^∗ \to
+\{0, 1\}^∗\)</span> be an efficient,length preserving, keyed
+permutation. <span class="math inline">\(F\)</span> is a strong
+pseudorandom permutation if for all probabilistic polynomial-time
+distinguishers <span class="math inline">\(D\)</span>, there exists a
+negligible function <span class="math inline">\(\text{negl}\)</span>
+such that: <span
+class="math display">\[\left|\text{Pr}[D^{F_k(\cdot),F_k^{-1}(\cdot)}(1^n)
+= 1] − \text{Pr}[D^{f(\cdot),f^{-1}(\cdot)}(1^n) = 1]\right| \leq
+\text{negl}(n)\]</span>, where the first probability is taken over
+uniform choice of <span class="math inline">\(k \in \{0, 1\}^n\)</span>
+and the randomness of <span class="math inline">\(D\)</span>, and the
+second probability is taken over uniform choice of <span
+class="math inline">\(f \in \text{Perm}_n\)</span> and the randomness of
+<span class="math inline">\(D\)</span>.</p>
+</blockquote>
+<p>通过伪随机函数，可以构造 CPA-secure 的加密方法</p>
+<blockquote>
+<p>Let <span class="math inline">\(F\)</span> be a pseudorandom
+function. Define a fixed-length, private-key encryption scheme for
+messages of length <span class="math inline">\(n\)</span> as
+follows:</p>
+<ul>
+<li><span class="math inline">\(\text{Gen}\)</span>: on input <span
+class="math inline">\(1^n\)</span>, choose uniform <span
+class="math inline">\(k \in \{0, 1\}^n\)</span> and output it.</li>
+<li><span class="math inline">\(\text{Enc}\)</span>: on input a key
+<span class="math inline">\(k \in \{0, 1\}^n\)</span> and a message
+<span class="math inline">\(m \in \{0, 1\}^n\)</span>, choose uniform
+<span class="math inline">\(r \in \{0, 1\}^n\)</span> and output the
+ciphertext <span class="math display">\[c := \langle r, F_{k}(r) \oplus
+m\rangle\]</span></li>
+<li><span class="math inline">\(\text{Dec}\)</span>: on input a key
+<span class="math inline">\(k \in \{0, 1\}^n\)</span> and a ciphertext
+<span class="math inline">\(c = \langle r, s\rangle\)</span> , output
+the message <span class="math display">\[m := F_{k}(r) \oplus
+s\]</span></li>
+</ul>
+</blockquote>
+<p>证明过程大概就是先通过反证法证明当 <span
+class="math inline">\(F\)</span> 替换为真随机函数时，<span
+class="math inline">\(\mathcal A\)</span>
+的行为和替换前差不多；然后证明当 <span class="math inline">\(F\)</span>
+替换为真随机函数时，<span class="math inline">\(\mathcal A\)</span>
+无法通过 CPA 不可区分测试。</p>
+<hr />
+<h3 id="流密码">流密码</h3>
+<p>可以使用<strong>流密码(stream ciphers)</strong>技术来解决
+pseudorandom generator 生成的伪随机数长度不够或者浪费的问题。</p>
+<blockquote>
+<p>Formally, a stream cipher is a pair of deterministic algorithms <span
+class="math inline">\((\text{Init}, \text{Next})\)</span> where:</p>
+<ul>
+<li><span class="math inline">\(\text{Init}\)</span> takes as input a
+seed <span class="math inline">\(s\)</span> and an optional
+<em>initialization vector</em> <span class="math inline">\(IV\)</span> ,
+and outputs some initial state <span
+class="math inline">\(\text{st}\)</span>.</li>
+<li><span class="math inline">\(\text{Next}\)</span> takes as input a
+current state <span class="math inline">\(\text{st}\)</span> and outputs
+a bit <span class="math inline">\(y\)</span> along with updated state
+<span class="math inline">\(\text{st}&#39;\)</span> .</li>
+</ul>
+</blockquote>
+<p>定义函数 <span class="math inline">\(\text{GetBits}\)</span>，输入
+<span class="math inline">\(\text{st}_0\)</span> 和 <span
+class="math inline">\(1^{\ell}\)</span>，</p>
+<ol type="1">
+<li>从 <span class="math inline">\(i=1\)</span> 到 <span
+class="math inline">\(n\)</span>，计算 <span
+class="math inline">\((y_i,\text{st}_i) :=
+\text{Next}(\text{st}_{i−1})\)</span></li>
+<li>返回 <span class="math inline">\(\ell\)</span>-bit 串 <span
+class="math inline">\(y = y_1 \cdots y_{\ell}\)</span> 和最终状态 <span
+class="math inline">\(\text{st}_{\ell}\)</span></li>
+</ol>
+<blockquote>
+<p>Let <span class="math inline">\(F\)</span> be a pseudorandom
+function. Define a stream cipher <span
+class="math inline">\((\text{Init}, \text{Next})\)</span> as follows,
+where <span class="math inline">\(\text{Init}\)</span> accepts a <span
+class="math inline">\(3n/4\)</span>-bit initialization vector and <span
+class="math inline">\(\text{Next}\)</span> outputs <span
+class="math inline">\(n\)</span> bits in each call:</p>
+<ul>
+<li><span class="math inline">\(\text{Init}\)</span>: on input <span
+class="math inline">\(s \in \{0, 1\}^n\)</span> and <span
+class="math inline">\(IV \in \{0, 1\}^{3n/4}\)</span>, output <span
+class="math inline">\(\text{st} =(s, IV, 0)\)</span>.</li>
+<li><span class="math inline">\(\text{Next}\)</span>: on input <span
+class="math inline">\(\text{st} = (s, IV, i)\)</span>, output <span
+class="math inline">\(y := F_s(IV || \langle i\rangle )\)</span> and
+updated state <span class="math inline">\(\text{st}&#39; = (s, IV, i +
+1)\)</span>.</li>
+</ul>
+</blockquote>
+<p>使用流密码加密任意长度的明文，分为两种模式：<strong>同步模式(synchronized
+mode)</strong>和<strong>异步模式(unsynchronized mode)</strong></p>
+<p>同步模式用来加密一系列从发送者 <span class="math inline">\(S\)</span>
+到接收者 <span class="math inline">\(R\)</span> 的消息。</p>
+<blockquote>
+<ol type="1">
+<li>Both parties call <span
+class="math inline">\(\text{Init}(k)\)</span> to obtain the same initial
+state <span class="math inline">\(\text{st}_0\)</span>.</li>
+<li>Let <span class="math inline">\(\text{st}_S\)</span> be the current
+state of <span class="math inline">\(S\)</span>. If <span
+class="math inline">\(S\)</span> wants to encrypt a message <span
+class="math inline">\(m\)</span>, it computes <span
+class="math inline">\((y,\text{st}&#39;_S):=\text{GetBits}(\text{st}_S,
+1^{|m|})\)</span>, sends <span class="math inline">\(c:=m\oplus
+y\)</span> to the receiver,and updates its local state to <span
+class="math inline">\(st_S&#39;\)</span>.</li>
+<li>Let <span class="math inline">\(\text{st}_R\)</span> be the current
+state of <span class="math inline">\(R\)</span>. When <span
+class="math inline">\(R\)</span> receives a ciphertext <span
+class="math inline">\(c\)</span> from the sender, it computes <span
+class="math inline">\((y,\text{st}&#39;_R):=\text{GetBits}(\text{st}_R,
+1^{|c|})\)</span>, outputs the message <span
+class="math inline">\(m:=c\oplus y\)</span>, and updates its own local
+state to <span class="math inline">\(\text{st}&#39;_R\)</span>.</li>
+</ol>
+</blockquote>
+<p>通过共享两个 key 可以实现双向通信。这种模式没有使用 <span
+class="math inline">\(IV\)</span> 向量。</p>
+<p>在异步模式，流密码使用 <span class="math inline">\(IV\)</span>
+向量，可以构造stateless encryption
+scheme。主要优势是可以处理任意长度的消息。</p>
+<blockquote>
+<p>Let <span class="math inline">\((\text{Init}, \text{Next})\)</span>
+be a stream cipher that takes an <span
+class="math inline">\(n\)</span>-bit <span
+class="math inline">\(IV\)</span> . Define a private-key encryption
+scheme for arbitrary-length messages as follows:</p>
+<ul>
+<li><span class="math inline">\(\text{Gen}\)</span>: on input <span
+class="math inline">\(1^n\)</span>, choose a uniform <span
+class="math inline">\(k\in\{0, 1\}^n\)</span> and output it.</li>
+<li><span class="math inline">\(\text{Enc}\)</span>: on input a key
+<span class="math inline">\(k\in \{0, 1\}^n\)</span> and a message <span
+class="math inline">\(m\in\{0, 1\}^∗\)</span>, choose uniform <span
+class="math inline">\(IV \in \{0, 1\}^n\)</span>, and output the
+ciphertext <span class="math display">\[\langle IV,
+\text{GetBits}_1(\text{Init}(k, IV ), 1^{|m|}) \oplus
+m\rangle\]</span></li>
+<li><span class="math inline">\(\text{Dec}\)</span>: on input a key
+<span class="math inline">\(k\in \{0, 1\}^n\)</span> and a ciphertext
+<span class="math inline">\(\langle IV, c\rangle\)</span>, output the
+message <span class="math display">\[m :=
+\text{GetBits}_1(\text{Init}(k, IV ), 1^{|c|}) \oplus c\]</span></li>
+</ul>
+</blockquote>
+<hr />
+<h3 id="分组密码">分组密码</h3>
+<p>block cipher 其实就是(强)伪随机排列的另一个名字，但是 block cipher
+不支持任意长度的 key。</p>
+<p>这里假设 <span class="math inline">\(m\)</span> 的长度是 <span
+class="math inline">\(n\)</span> 的倍数，<span
+class="math inline">\(m=m_1m_2...m_{\ell}\)</span>, 其中 <span
+class="math inline">\(m_i\in\{0,1\}^n\)</span>。</p>
+<p><strong>Electronic Code Book (ECB) mode</strong> <span
+class="math display">\[c=F_k(m_1)F_k(m_2)...F_k(m_{\ell})\]</span>
+但是它甚至不是 EAV-secure 的，因此不应该使用这种模式。</p>
+<p><strong>Cipher Block Chaining (CBC) mode</strong> <span
+class="math display">\[c_0=IV,c_i=F_k(c_{i-1}\oplus m_i)\]</span> <span
+class="math inline">\(IV\)</span> 是初始向量。可以证明，当 <span
+class="math inline">\(F\)</span> 是伪随机函数时，它是 CPA-secure
+的。</p>
+<p>chained CBC 是 CBC
+的一个<strong>有记忆(stateful)</strong>变种，它将上次传递的最后一块密文作为这次加密的
+<span class="math inline">\(IV\)</span> 向量，这样就不用每次都传递 <span
+class="math inline">\(IV\)</span> 向量了。但是 chained CBC 并不是
+CPA-secure 的。</p>
+<p><strong>Output Feedback (OFB) mode</strong> <span
+class="math display">\[y_0=IV,y_i=F_k(y_{i-1}),c_i=m_i\oplus
+y_i\]</span> 和 <span class="math inline">\(CBC\)</span> 一样，需要将
+<span class="math inline">\(IV\)</span> 作为密文的一部分以供解密。OFB
+不要求 <span class="math inline">\(F\)</span>
+可逆。它的有记忆版本是安全的。</p>
+<p><strong>Counter (CTR) mode</strong></p>
+<p>(未完待续)</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/crypto/" rel="tag"># crypto</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item"></div>
+      <div class="post-nav-item">
+    <a href="/2024/06/25/pandoc-markdown-test/" rel="next" title="Pandoc Markdown test">
+      Pandoc Markdown test <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#introduction-to-modern-cryptography-reading-notes"><span class="nav-number">1.</span> <span class="nav-text">Introduction
+to Modern Cryptography Reading Notes</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#private-key-encryption"><span class="nav-number">1.1.</span> <span class="nav-text">3 Private-Key Encryption</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B7%E4%BD%93%E5%AE%89%E5%85%A8%E5%92%8C%E6%B8%90%E8%BF%9B%E5%AE%89%E5%85%A8"><span class="nav-number">1.1.1.</span> <span class="nav-text">具体安全和渐进安全</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AF%86%E9%92%A5%E5%8A%A0%E5%AF%86%E5%8F%8A%E5%85%B6%E5%AE%89%E5%85%A8%E5%AE%9A%E4%B9%89"><span class="nav-number">1.1.2.</span> <span class="nav-text">密钥加密及其安全定义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BC%AA%E9%9A%8F%E6%9C%BA"><span class="nav-number">1.1.3.</span> <span class="nav-text">伪随机</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%9A%E6%AC%A1%E5%8A%A0%E5%AF%86"><span class="nav-number">1.1.4.</span> <span class="nav-text">多次加密</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%89%E6%8B%A9%E5%AF%86%E6%96%87%E6%94%BB%E5%87%BBcpa"><span class="nav-number">1.1.5.</span> <span class="nav-text">选择密文攻击CPA</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BC%AA%E9%9A%8F%E6%9C%BA%E5%87%BD%E6%95%B0"><span class="nav-number">1.1.6.</span> <span class="nav-text">伪随机函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B5%81%E5%AF%86%E7%A0%81"><span class="nav-number">1.1.7.</span> <span class="nav-text">流密码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E7%BB%84%E5%AF%86%E7%A0%81"><span class="nav-number">1.1.8.</span> <span class="nav-text">分组密码</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Louhc</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">21</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Louhc</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+</body>
+</html>

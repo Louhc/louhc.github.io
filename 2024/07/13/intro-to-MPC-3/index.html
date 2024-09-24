@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"louhc.github.io","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="3 Fundamental MPC Protocols Yao’s Garbled Circuit Protocol (Yao’s GC) 混淆门的产生过程.  Parameters: Boolean circuit \(\mathcal C\) implementing function \(\mathcal F\), security parameter \(\kappa\).">
+<meta property="og:type" content="article">
+<meta property="og:title" content="A Pragmatic Introduction to Secure Multi-Party Computation (3) 基础MPC协议">
+<meta property="og:url" content="https://louhc.github.io/2024/07/13/intro-to-MPC-3/index.html">
+<meta property="og:site_name" content="Hello, I&#39;m Louhc">
+<meta property="og:description" content="3 Fundamental MPC Protocols Yao’s Garbled Circuit Protocol (Yao’s GC) 混淆门的产生过程.  Parameters: Boolean circuit \(\mathcal C\) implementing function \(\mathcal F\), security parameter \(\kappa\).">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2024-07-13T07:14:11.000Z">
+<meta property="article:modified_time" content="2024-09-24T12:31:31.385Z">
+<meta property="article:author" content="Louhc">
+<meta property="article:tag" content="crypto">
+<meta property="article:tag" content="mpc">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://louhc.github.io/2024/07/13/intro-to-MPC-3/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>A Pragmatic Introduction to Secure Multi-Party Computation (3) 基础MPC协议 | Hello, I'm Louhc</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Hello, I'm Louhc</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://louhc.github.io/2024/07/13/intro-to-MPC-3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Louhc">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hello, I'm Louhc">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          A Pragmatic Introduction to Secure Multi-Party Computation (3) 基础MPC协议
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-07-12 23:14:11" itemprop="dateCreated datePublished" datetime="2024-07-12T23:14:11-08:00">2024-07-12</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-09-24 04:31:31" itemprop="dateModified" datetime="2024-09-24T04:31:31-08:00">2024-09-24</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Reading-Notes/" itemprop="url" rel="index"><span itemprop="name">Reading Notes</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="fundamental-mpc-protocols">3 Fundamental MPC Protocols</h2>
+<h3 id="yaos-garbled-circuit-protocol-yaos-gc">Yao’s Garbled Circuit
+Protocol (Yao’s GC)</h3>
+<p>混淆门的产生过程.</p>
+<blockquote>
+<p>Parameters: Boolean circuit <span class="math inline">\(\mathcal
+C\)</span> implementing function <span class="math inline">\(\mathcal
+F\)</span>, security parameter <span
+class="math inline">\(\kappa\)</span>.</p>
+<p>GC generation:</p>
+<ol type="1">
+<li><em>Wire Label Generation</em>. For each wire <span
+class="math inline">\(w_i\)</span> of <span
+class="math inline">\(\mathcal C\)</span>, randomly choose wire
+labels,<br />
+<span class="math display">\[w_i^b = (k_i^b\in_R\{0, 1\}^{\kappa},
+p_i^b\in_R\{0,1\})\]</span> , such that <span
+class="math inline">\(p_i^b = 1−p^{1−b}_i\)</span>.</li>
+<li><em>Garbled Circuit Construction</em>. For each gate <span
+class="math inline">\(G_i\)</span> of <span
+class="math inline">\(\mathcal C\)</span> in topological order:
+<ol type="a">
+<li>Assume <span class="math inline">\(G_i\)</span> is a <span
+class="math inline">\(2\)</span>-input Boolean gate implementing
+function <span class="math inline">\(g_i\)</span>: <span
+class="math inline">\(w_c = g_i(w_a, w_b)\)</span>, where input labels
+are <span class="math inline">\(w^0_a = (k^0_a, p^0_a), w^1_a =(k^1_a,
+p^1_a), w^0_b= (k^0_b, p^0_b), w^1_b= (k^1_b, p^1_b)\)</span>, and the
+output labels are <span class="math inline">\(w^0_c = (k^0_c, p^0_c),
+w^1_c = (k^1_c, p^1_c)\)</span>.<br />
+</li>
+<li>Create <span class="math inline">\(G_i\)</span>’s garbled table. For
+each of <span class="math inline">\(2^2\)</span> possible combinations
+of <span class="math inline">\(G_i\)</span>’s input values <span
+class="math inline">\(v_a, v_b\in\{0, 1\}\)</span>, set<br />
+<span class="math display">\[e_{v_a,v_b} = H(k^{v_a}_a|| k^{v_b}_b||
+i)\oplus w_c^{g_i(v_a,v_b)}\]</span> Sort entries <span
+class="math inline">\(e\)</span> in the table by the input pointers,
+placing entry <span class="math inline">\(e_{v_a,v_b}\)</span> in
+position <span class="math inline">\(\langle p^{v_a}_a ,
+p^{v_b}_b\rangle\)</span>.</li>
+</ol></li>
+<li>Output Decoding Table. For each circuit-output wire <span
+class="math inline">\(w_i\)</span> (the output of gate <span
+class="math inline">\(G_j\)</span>) with labels <span
+class="math inline">\(w_i^0 = (k_i^0, p^0_i), w_i^1 = (k_i^1,
+p_1^i)\)</span>, create garbled output table for both possible wire
+values <span class="math inline">\(v\in\{0, 1\}\)</span>. Set<br />
+<span
+class="math display">\[e_v=H(k_i^v||\text{&quot;out&quot;}||j)\oplus
+v\]</span><br />
+(Because we are xoring with a single bit, we just use the lowest bit of
+the output of <span class="math inline">\(H\)</span> for generating the
+above <span class="math inline">\(e_v\)</span>.) Sort entries <span
+class="math inline">\(e\)</span> in the table by the input pointers,
+placing entry ev in position <span class="math inline">\(p_i^v\)</span>.
+(There is no conflict, since <span class="math inline">\(p^1_i=
+p^0_i\oplus 1\)</span>.)</li>
+</ol>
+</blockquote>
+<p>接下来是 <span class="math inline">\(P_1\)</span> 和 <span
+class="math inline">\(P_2\)</span> 的具体交互过程.</p>
+<blockquote>
+<p>Parameters: Parties <span class="math inline">\(P_1\)</span> and
+<span class="math inline">\(P_2\)</span> with inputs <span
+class="math inline">\(x\in\{0, 1\}^n\)</span> and <span
+class="math inline">\(y\in\{0, 1\}^n\)</span> respectively. Boolean
+circuit <span class="math inline">\(\mathcal C\)</span> implementing
+function <span class="math inline">\(\mathcal F\)</span>.</p>
+<p>Protocol:</p>
+<ol type="1">
+<li><span class="math inline">\(P_1\)</span> plays the role of GC
+generator and runs the algorithm of Figure 3.1. <span
+class="math inline">\(P_1\)</span> then sends the obtained GC <span
+class="math inline">\(\hat C\)</span> (including the output decoding
+table) to <span class="math inline">\(P_2\)</span>.</li>
+<li><span class="math inline">\(P_1\)</span> sends to <span
+class="math inline">\(P_2\)</span> active wire labels for the wires on
+which <span class="math inline">\(P_1\)</span> provides input.</li>
+<li>For each wire <span class="math inline">\(w_i\)</span> on which
+<span class="math inline">\(P_2\)</span> provides input, <span
+class="math inline">\(P_1\)</span> and <span
+class="math inline">\(P_2\)</span> execute an Oblivious Transfer (OT)
+where <span class="math inline">\(P_1\)</span> plays the role of the
+Sender, and <span class="math inline">\(P_2\)</span> plays the role of
+the Receiver:
+<ol type="a">
+<li><span class="math inline">\(P_1\)</span>’s two input secrets are the
+two labels for the wire, and <span class="math inline">\(P_2\)</span>’s
+choice-bit input is its input on that wire.</li>
+<li>Upon completion of the OT, <span class="math inline">\(P_2\)</span>
+receives active wire label on the wire.</li>
+</ol></li>
+<li><span class="math inline">\(P_2\)</span> evaluates received <span
+class="math inline">\(\hat C\)</span> gate-by-gate, starting with the
+active labels on the input wires.
+<ol type="a">
+<li>For gate <span class="math inline">\(G_i\)</span> with garbled table
+<span class="math inline">\(T = (e_{0,0},...e_{1,1})\)</span> and active
+input labels <span class="math inline">\(w_a = (k_a, p_a), w_b = (k_b,
+p_b)\)</span>, <span class="math inline">\(P_2\)</span> computes active
+output label <span class="math inline">\(w_c = (k_c, p_c)\)</span>:
+<span class="math display">\[w_c = H(k_a || k_b || i)\oplus
+e_{p_a,p_b}\]</span></li>
+</ol></li>
+<li>Obtaining output using output decoding tables. Once all gates of
+<span class="math inline">\(\hat C\)</span> are evaluated, using “out”
+for the second key to decode the final output gates, <span
+class="math inline">\(P_2\)</span> obtains the final output labels which
+are equal to the plaintext output of the computation. <span
+class="math inline">\(P_2\)</span> sends the obtained output to <span
+class="math inline">\(P_1\)</span>, and they both output it.</li>
+</ol>
+</blockquote>
+<h3 id="gmw-protocol">GMW Protocol</h3>
+<p>Yao’s GC 只能支持只有两方的情况, 如果需要支持不少于三方,
+则需要新的技术支持. 但是 <strong>GMW 协议 (Goldreich-Micali-Wigderson
+(GMW) Protocol)</strong> 天然支持这一点.</p>
+<p>先讲只有两方的情况. 不失一般性地, 我们只考虑NOT, XOR 和 AND 三个门.
+对于每根导线(即 wire, 表示某个门电路的输入或输出, 用 <span
+class="math inline">\(w_i\)</span> 来表示), <span
+class="math inline">\(P_1\)</span> 和 <span
+class="math inline">\(P_2\)</span>
+都将各自持有它的一个<strong>“部分”(share)</strong> <span
+class="math inline">\(s_i^1\)</span> 和 <span
+class="math inline">\(s_i^2\)</span>, 这根导线的实际值为 <span
+class="math inline">\(s_i^1\oplus s_i^2\)</span>. <span
+class="math inline">\(P_1\)</span> 和 <span
+class="math inline">\(P_2\)</span>
+最终只需要把最终输出导线的值展示给对方,
+他们就都可以通过异或操作得到计算结果.</p>
+<p>具体来说, <span class="math inline">\(P_1\)</span> 对于自己的输入
+<span class="math inline">\(x_1,...,x_n\)</span>, 生成一列随机数 <span
+class="math inline">\(r_1,...,r_n\)</span>, 然后将 <span
+class="math inline">\(r_1,...,r_n\)</span> 发送给 <span
+class="math inline">\(P_2\)</span> 作为 <span
+class="math inline">\(P_2\)</span> 的 share, 而将自己的 share 设为 <span
+class="math inline">\(x_1\oplus r_1,...,x_n\oplus r_n\)</span>. 如此,
+只需要将双方的 share 进行异或操作, 就可以得到真正的输入值 <span
+class="math inline">\(r_1\oplus (x_1\oplus r_1)=x_1\)</span>. <span
+class="math inline">\(P_2\)</span> 也进行同样的操作.<br />
+然后双方各自计算逻辑电路 <span class="math inline">\(\mathcal
+C\)</span>. 当遇到 NOT 门时, 直接将自己所持有的 share 取反, 因为 <span
+class="math inline">\((\lnot s_i^1)\oplus(\lnot s_i^2)=\lnot(s_i^1\oplus
+s_i^2)\)</span>, 也就是说操作完成后<em>双方 share
+异或的结果</em>确实等于<em>输入实际值 NOT 的结果</em>.<br />
+遇到 XOR 门时, 也是直接将自己持有的两个输入的 share 取异或, 因为 <span
+class="math inline">\((s_i^1\oplus s_j^1)\oplus(s_i^2\oplus
+s_j^2)=(s_i^1\oplus s_i^2)\oplus(s_j^1\oplus s_j^2)\)</span>.<br />
+遇到 AND 门时, 就需要双方进行交流了. <span
+class="math inline">\(P_1\)</span> 生成一个随机数 <span
+class="math inline">\(r\in_R\{0,1\}\)</span> 作为自己的 share,
+然后枚举两根输入导线 <span class="math inline">\(P_2\)</span> 那边的
+share 的可能值, 计算出四种情况下输出导线的实际值, 利用 1-out-of-4 OT
+将实际值与 <span class="math inline">\(r\)</span> 的异或值发送给 <span
+class="math inline">\(P_2\)</span>.</p>
+<p>可以将上述过程拓展为 <span class="math inline">\(n\)</span> 方计算.
+对于某一方的一个输入, 该方生成 <span class="math inline">\(n-1\)</span>
+个随机数发送给其他方作为他们的 share,
+将这些随机数与自己输入的异或值作为自己的 share. NOT 和 XOR
+门的操作都与两方情形一样. 对于 AND 门, 由于 <span
+class="math display">\[(\oplus_{k=1}^{n}s_i^k)\land(\oplus_{k=1}^{n}s_j^k)=(\oplus_{k=1}^{n}(s_i^k\land
+s_j^k))\oplus(\oplus_{k_1\neq k_2}(s_i^{k_1}\land s_j^{k_2}))\]</span>
+可以各自计算 <span class="math inline">\(s_i^k\oplus s_j^k\)</span>,
+然后 <span class="math inline">\(P_{k_1}\)</span> 和 <span
+class="math inline">\(P_{k_2}\)</span> 之间通过 1-out-of-4 OT 计算 <span
+class="math inline">\(s_i^{k_1}\land s_j^{k_2}\)</span> 的两个
+share.</p>
+<h3 id="bgw-protocol">BGW Protocol</h3>
+<p>BGW protocol 非常依赖于 Shamir sercret shares,
+它天然可以处理算数电路.</p>
+<p>用 <span class="math inline">\([v]\)</span> 表示各方持有 <span
+class="math inline">\(v\)</span> 的 Shamir secret shares.
+随机生成一个多项式 <span class="math inline">\(p\)</span>,
+它的度数不超过 <span class="math inline">\(t\)</span>, 并且常数项 <span
+class="math inline">\(p(0)=v\)</span>, <span
+class="math inline">\(P_i(1\leq i\leq n)\)</span> 持有的 share 为 <span
+class="math inline">\(p(i)\)</span>. <span
+class="math inline">\(t\)</span> 表示 sharing 的阈值, 即任意 <span
+class="math inline">\(t\)</span> 个 share 都无法泄露 <span
+class="math inline">\(v\)</span> 的任何信息. 当知道至少 <span
+class="math inline">\(t+1\)</span> 方的 share 时,
+可以通过高斯消元或拉格朗日插值获取 <span
+class="math inline">\(p(0)\)</span> 的值.</p>
+<p>协议的具体过程如下. 每一方都将持有的输入值 <span
+class="math inline">\(v\)</span> 的 share <span
+class="math inline">\([v]\)</span> 分发给各方. 当遇到加法门时,
+每一方都将自己持有的 share 相加即可, 这样得到的多项式 <span
+class="math inline">\(p=p_1+p_2\)</span> 满足 <span
+class="math inline">\(p(0)=p_1(0)+p_2(0)\)</span>. 当遇到乘法门时,
+直接相乘是不可行的, 因为 <span class="math inline">\(p=p_1\cdot
+p_2\)</span> 的度数超过 <span class="math inline">\(t\)</span>,
+需要对其进行降次操作. 由拉格朗日插值可知, <span
+class="math display">\[p(0)=\sum_{i=1}^{2t+1}\lambda_i p(i)\]</span>
+<span class="math inline">\(P_1,P_2...P_{2t+1}\)</span> 将持有的 <span
+class="math inline">\(p(i)\)</span> 的 share <span
+class="math inline">\([p(i)]\)</span> 分发出去即可.</p>
+<p>由于乘法门的存在, 需要满足 <span class="math inline">\(n\geq
+2t+1\)</span>, 否则可能无法降次.</p>
+<h3 id="mpc-from-preprocessed-multiplication-triples">MPC From
+Preprocessed Multiplication Triples</h3>
+<p>通过预处理, 可以使满足一些性质的协议 (例如上一节提到的 BGW 协议)
+在一定程度上规避交流开销.</p>
+<p>以 BGW 协议为例, 各方预先分发 <span
+class="math inline">\([a]\)</span>, <span
+class="math inline">\([b]\)</span>, <span
+class="math inline">\([c]\)</span>, 其中 <span
+class="math inline">\(c=a+b\)</span>, 任意 <span
+class="math inline">\(t\)</span> 方都无法根据自己的 shares 获知 <span
+class="math inline">\(a,b,c\)</span> 的任何信息. 当遇到乘法门 (输入为
+<span class="math inline">\(v_{\alpha},v_{\beta}\)</span>) 时, 各方公开
+<span class="math inline">\([v_{\alpha}-a]\)</span> 和 <span
+class="math inline">\([v_{\beta}-b]\)</span>, 设 <span
+class="math inline">\(d=v_{\alpha}-a,e=v_{\beta}-b\)</span>. <span
+class="math inline">\(v_{\alpha}\cdot
+v_{\beta}=(d+a)(e+b)=de+ea+db+c\)</span>, 也就是说 <span
+class="math inline">\([v_{\alpha}\cdot
+v_{\beta}]=de+e[a]+d[b]+[c]\)</span>, 而加法门是不需要进行交互的,
+因此我们实现了只通过两次”公开“操作完成乘法门的计算.</p>
+<p>这样的预处理方法适用于满足如下条件的所有协议:</p>
+<ul>
+<li>加法同态. 对于 <span class="math inline">\([a]\)</span> 和 <span
+class="math inline">\([b]\)</span>, 以及一个公开值 <span
+class="math inline">\(c\)</span>, 各方可以在内部计算 <span
+class="math inline">\([a+b], [a+c], [ca]\)</span></li>
+<li>可公开. 参与计算的各方可以选择公开 <span
+class="math inline">\([x]\)</span>, 使每一方都知道 <span
+class="math inline">\(x\)</span> 的值.</li>
+<li>隐私性. 任何攻击者无法从 <span class="math inline">\([a]\)</span>
+中获取 <span class="math inline">\(a\)</span> 的任何信息.</li>
+<li>Beaver 三元组. 对于每一个乘法门, 各方拥有一个三元组 <span
+class="math inline">\([a],[b],[c]\)</span>, 其中 <span
+class="math inline">\(c=ab\)</span>.</li>
+<li>随机输入组件. 对于 <span class="math inline">\(P_i\)</span>
+的某个输入 <span class="math inline">\(x\)</span>, <span
+class="math inline">\(P_i\)</span> 将自己产生的一个随机数 <span
+class="math inline">\(r\)</span> 分发出去 <span
+class="math inline">\([r]\)</span>, 然后公开 <span
+class="math inline">\(\delta=x-r\)</span>, 即可实现 <span
+class="math inline">\(x\)</span> 的分发.</li>
+</ul>
+<h3 id="constant-round-multi-party-computation-bmr">Constant-Round
+Multi-Party Computation: BMR</h3>
+<blockquote>
+<p>Parameters: Boolean circuit <span class="math inline">\(\mathcal
+C\)</span> implementing function <span class="math inline">\(\mathcal
+F\)</span>.<br />
+Let <span class="math inline">\(F : id, \{0, 1\}^{\kappa+1}\to\{0,
+1\}^{n\cdot(\kappa+1)}\)</span> be a PRF.<br />
+Players: <span class="math inline">\(P_1,P_2,...,P_n\)</span> with
+inputs <span class="math inline">\(x_1,...,x_n\in\{0,
+1\}^k\)</span>.<br />
+GC generation:</p>
+<ol type="1">
+<li>For each wire <span class="math inline">\(w_i\)</span> of <span
+class="math inline">\(\mathcal C\)</span>, each <span
+class="math inline">\(P_j\)</span> randomly chooses wire sublabels,<span
+class="math inline">\(w_{i,j}^b= (k_{i,j}^b, p_{i,j}^b)\in_R\{0,
+1\}^{\kappa+1}\)</span>, such that <span
+class="math inline">\(p_{i,j}^b= 1 − p_{i,j}^{1−b}\)</span>, and flip
+bit shares <span class="math inline">\(f_{i,j}\in_R\{0, 1\}\)</span>.
+For each wire <span class="math inline">\(w_i,P_j\)</span> locally
+computes its underlying-MPC input, <span class="math display">\[I_{i,j}
+= (F(i, w_{i,j}^0), F(i, w_{i,j}^1), p^0_{i,j}, f_{i,j})\]</span></li>
+<li>For each gate <span class="math inline">\(G_i\)</span> of <span
+class="math inline">\(\mathcal C\)</span> in parallel, all players
+participate in <span class="math inline">\(n\)</span>-party MPC to
+compute the garbled table, taking as input all players’ inputs <span
+class="math inline">\(x_1,...,x_n\)</span> as well as pre-computed
+values <span class="math inline">\(I_{i,j}\)</span>, by evaluating the
+following function:
+<ol type="1">
+<li>Assume <span class="math inline">\(G_i\)</span> is a <span
+class="math inline">\(2\)</span>-input Boolean gate implementing
+function <span class="math inline">\(g\)</span>, with input wires <span
+class="math inline">\(w_a, w_b\)</span> and output wire <span
+class="math inline">\(w_c\)</span>.</li>
+<li>Compute pointer bits <span class="math inline">\(p^0_a
+=\oplus_{j=1..n}p^0_{a,j},p^0_b =\oplus_{j=1..n}p^0_{b,j},p^0_c
+=\oplus_{j=1..n}p^0_{c,j}\)</span>, and set <span
+class="math inline">\(p^1_a = 1 − p^0_a, p^1_b= 1 − p^0_b, p^1_c = 1 −
+p^0_c\)</span>. Similarly compute flip bits <span
+class="math inline">\(f_a,f_b,f_c\)</span> by xor-ing the corresponding
+flip bit shares submitted by the parties. Amend the semantics of the
+wires according to the flip bits by xor-ing <span
+class="math inline">\(f_a, f_b, f_c\)</span> in the label index as
+appropriate (included in the next steps).</li>
+<li>Create <span class="math inline">\(G_i\)</span>’s garbled table. For
+each of 2^2 possible combinations of <span
+class="math inline">\(G_i\)</span>’s input values, <span
+class="math inline">\(v_a,v_b\in\{0,1\}\)</span>, set <span
+class="math display">\[e_{v_a,v_b} = w^{v_c\oplus
+f_c}_c\oplus_{j=1..n}(F(i,w^{v_a\oplus f_a}_{a,j})\oplus F(i,
+w^{v_b\oplus f_b}_{b,j}))\]</span> ,where <span
+class="math inline">\(w^0_c = w^0_{c,1}||...||w^0_{c,n}||p^0_c\)</span>,
+<span
+class="math inline">\(w^1_c=w^1_{c,1}||...||w^1_{c,n}||p^1_c\)</span>.
+Sort entries <span class="math inline">\(e\)</span> in the table,
+placing entry <span class="math inline">\(e_{v_a,v_b}\)</span> in
+position <span class="math inline">\((p^{v_a}_a ,
+p^{v_b}_b)\)</span>.</li>
+<li>Output to <span class="math inline">\(P_1\)</span> the computed
+garbled tables, as well as active wire labels inputs of <span
+class="math inline">\(\mathcal C\)</span>, as selected by players’
+inputs, <span class="math inline">\(x_1,...,x_n\)</span>.</li>
+</ol></li>
+</ol>
+</blockquote>
+<h3 id="information-theoretic-garbled-circuits">Information-Theoretic
+Garbled Circuits</h3>
+<h3 id="oblivious-transfer">Oblivious Transfer</h3>
+<p>一个基础的 public key-based OT: <span class="math inline">\(\mathcal
+R\)</span> 生成一个密钥公钥对 <span
+class="math inline">\((sk,pk)\)</span> 和一个随机数 <span
+class="math inline">\(r\)</span>, 然后发送 <span
+class="math inline">\((pk, r)\)</span> 或者 <span
+class="math inline">\((r, pk)\)</span>, <span
+class="math inline">\(\mathcal S\)</span> 接收到 <span
+class="math inline">\((pk_0,pk_1)\)</span> (他不知道哪个是 <span
+class="math inline">\(pk\)</span>, 哪个是 <span
+class="math inline">\(r\)</span>), 发送 <span
+class="math inline">\((\text{Enc}_{pk_0}(x_0),\text{Enc}_{pk_1}(x_1))\)</span>.
+它对于 semi-honest 是安全的, 但是攻击者可以生成两对密钥公钥,
+将两个公钥发送出去, 从而同时获知 <span
+class="math inline">\(x_0,x_1\)</span>.</p>
+<p>Beaver 提出了一种初始化方法, 可以通过较少次数的公钥加密操作,
+实现多项式次 OT. 设 <span class="math inline">\(m\)</span>
+为一个批次(batch)的 OT 次数, 我们将使用 <span
+class="math inline">\(\kappa\)</span> 次 OT 操作完成一个批次的 <span
+class="math inline">\(m\)</span> 个 OT 操作.</p>
+<p><span class="math inline">\(\mathcal R\)</span> 生成一个 <span
+class="math inline">\(\kappa\)</span> bit 的随机数 <span
+class="math inline">\(r\)</span>, 利用 psuedorandom generator <span
+class="math inline">\(G\)</span> 生成长度为 <span
+class="math inline">\(m\)</span> 的伪随机数. 设 <span
+class="math inline">\(\mathcal R\)</span> 的 <span
+class="math inline">\(m\)</span> 次 OT 选择为 <span
+class="math inline">\(b=b_1...b_m\)</span>. <span
+class="math inline">\(\mathcal R\)</span> 将 <span
+class="math inline">\(G(r)\oplus b\)</span> 的值发给 <span
+class="math inline">\(\mathcal S\)</span>. 此时 <span
+class="math inline">\(\mathcal S\)</span> 和 <span
+class="math inline">\(\mathcal R\)</span> 通过 Yao’s GC 共同计算一个函数
+<span class="math inline">\(F\)</span>, <span
+class="math inline">\(F\)</span> 的输入为 <span
+class="math inline">\(r\)</span> 和 <span class="math inline">\(\mathcal
+S\)</span> 在 <span class="math inline">\(m\)</span> 次 OT 准备的值
+<span class="math inline">\((x_1^0,x_1^1),...,(x_m^0,x_m^1)\)</span>,
+<span class="math inline">\(F\)</span> 根据 <span
+class="math inline">\(G(r)\oplus b\)</span> 的值获取 <span
+class="math inline">\(b\)</span> 并计算该返回给 <span
+class="math inline">\(\mathcal R\)</span> 的值. 需要注意的一点是, <span
+class="math inline">\(\mathcal R\)</span> 不执行最后一步,
+即将计算值发送给 <span class="math inline">\(\mathcal S\)</span>.</p>
+<p>(skip)</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/crypto/" rel="tag"># crypto</a>
+              <a href="/tags/mpc/" rel="tag"># mpc</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2024/07/12/intro-to-MPC-2/" rel="prev" title="A Pragmatic Introduction to Secure Multi-Party Computation (2) 定义">
+      <i class="fa fa-chevron-left"></i> A Pragmatic Introduction to Secure Multi-Party Computation (2) 定义
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2024/07/15/intro-to-MPC-1/" rel="next" title="A Pragmatic Introduction to Secure Multi-Party Computation (1)">
+      A Pragmatic Introduction to Secure Multi-Party Computation (1) <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#fundamental-mpc-protocols"><span class="nav-number">1.</span> <span class="nav-text">3 Fundamental MPC Protocols</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#yaos-garbled-circuit-protocol-yaos-gc"><span class="nav-number">1.1.</span> <span class="nav-text">Yao’s Garbled Circuit
+Protocol (Yao’s GC)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#gmw-protocol"><span class="nav-number">1.2.</span> <span class="nav-text">GMW Protocol</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#bgw-protocol"><span class="nav-number">1.3.</span> <span class="nav-text">BGW Protocol</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#mpc-from-preprocessed-multiplication-triples"><span class="nav-number">1.4.</span> <span class="nav-text">MPC From
+Preprocessed Multiplication Triples</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#constant-round-multi-party-computation-bmr"><span class="nav-number">1.5.</span> <span class="nav-text">Constant-Round
+Multi-Party Computation: BMR</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#information-theoretic-garbled-circuits"><span class="nav-number">1.6.</span> <span class="nav-text">Information-Theoretic
+Garbled Circuits</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#oblivious-transfer"><span class="nav-number">1.7.</span> <span class="nav-text">Oblivious Transfer</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Louhc</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">21</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Louhc</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+</body>
+</html>

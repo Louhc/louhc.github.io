@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"louhc.github.io","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="Introduction to Modern Cryptography Reading Notes 7 Practical Constructions of Symmetric-Key Primitives 流密码 Linear-Feedback Shift Registers(LFSR) \(y_i&#x3D;s_i^{(0)},i&#x3D;0,...,n-1\) \(y_i&#x3D;\oplus_{j&#x3D;0">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Introduction to Modern Cryptography(7)">
+<meta property="og:url" content="https://louhc.github.io/2024/06/28/modern-crypto-7/index.html">
+<meta property="og:site_name" content="Hello, I&#39;m Louhc">
+<meta property="og:description" content="Introduction to Modern Cryptography Reading Notes 7 Practical Constructions of Symmetric-Key Primitives 流密码 Linear-Feedback Shift Registers(LFSR) \(y_i&#x3D;s_i^{(0)},i&#x3D;0,...,n-1\) \(y_i&#x3D;\oplus_{j&#x3D;0">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2024-06-28T04:17:41.000Z">
+<meta property="article:modified_time" content="2024-09-24T12:31:31.421Z">
+<meta property="article:author" content="Louhc">
+<meta property="article:tag" content="crypto">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://louhc.github.io/2024/06/28/modern-crypto-7/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Introduction to Modern Cryptography(7) | Hello, I'm Louhc</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Hello, I'm Louhc</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://louhc.github.io/2024/06/28/modern-crypto-7/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Louhc">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hello, I'm Louhc">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Introduction to Modern Cryptography(7)
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-06-27 20:17:41" itemprop="dateCreated datePublished" datetime="2024-06-27T20:17:41-08:00">2024-06-27</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-09-24 04:31:31" itemprop="dateModified" datetime="2024-09-24T04:31:31-08:00">2024-09-24</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Reading-Notes/" itemprop="url" rel="index"><span itemprop="name">Reading Notes</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1
+id="introduction-to-modern-cryptography-reading-notes"><em>Introduction
+to Modern Cryptography</em> Reading Notes</h1>
+<h2 id="practical-constructions-of-symmetric-key-primitives">7 Practical
+Constructions of Symmetric-Key Primitives</h2>
+<h3 id="流密码">流密码</h3>
+<p><strong>Linear-Feedback Shift Registers(LFSR)</strong></p>
+<p><span class="math inline">\(y_i=s_i^{(0)},i=0,...,n-1\)</span></p>
+<p><span
+class="math inline">\(y_i=\oplus_{j=0}^{n-1}c_jy_{i-n+j},i&gt;n-1\)</span></p>
+<p><span class="math inline">\(n\)</span> 称为 LFSR 的度数。</p>
+<p>知道 <span class="math inline">\(2n\)</span> 个输出后，可以得到 <span
+class="math inline">\(n\)</span> 个方程（如果是max length的，这 <span
+class="math inline">\(n\)</span> 个方程是独立的），然后可以解出所有系数
+<span class="math inline">\(c\)</span> 的值。</p>
+<p>可以通过引入一些非线性函数（比如 AND 和 OR）来避免这种攻击，称为
+FSR，比如将状态转移方程替换为一个非线性函数，或者将输出值替换为当前状态的一个非线性函数，或者使用多个
+LFSR，将它们的输出的一个非线性函数作为输出。</p>
+<p><strong>Trivium</strong></p>
+<p><strong>RC4</strong></p>
+<p><strong>ChaCha20</strong></p>
+<hr />
+<h3 id="分组密码">分组密码</h3>
+<p><strong>Confusion-diffusion paradigm</strong></p>
+<ol type="1">
+<li><em>round functions</em> <span
+class="math inline">\(\{f_i\}\)</span> introduce <em>confusion</em> into
+<span class="math inline">\(F\)</span> <span class="math display">\[
+F_k(x) = f_1(x_1)||\cdots||f_{16}(x_{16})
+\]</span></li>
+<li>introduce <em>diffusion</em> using a mixing permutation whereby the
+bits of the output are permuted, or “mixed”</li>
+</ol>
+<p>这样一个 confusion/diffusion 操作称为一个 <em>round</em>，重复这样的
+round 若干次。</p>
+<p><strong>Substitution-permutation networks (SPN)</strong></p>
+<p>使用一个 “substitution function” <span
+class="math inline">\(S\)</span> (是一个 permutation)，称为 <span
+class="math inline">\(S\)</span>-box，定义 <span
+class="math inline">\(f(x)=S(k\oplus x)\)</span></p>
+<ol type="1">
+<li><em>Key mixing</em>: Set <span class="math inline">\(x:=x\oplus
+k\)</span>, where <span class="math inline">\(k\)</span> is the
+current-round <em>sub-key</em>;</li>
+<li><em>Substitution</em>: Set <span
+class="math inline">\(x:=S_1(x_1)||\cdots||S_8(x_8)\)</span>, where
+<span class="math inline">\(x_i\)</span> is the <span
+class="math inline">\(i\)</span>th byte of <span
+class="math inline">\(x\)</span>;</li>
+<li><em>Permutation</em>: Permute the bits of <span
+class="math inline">\(x\)</span> to obtain the output of the round.</li>
+</ol>
+<p>在最后一个 round，还要经过一个 final key-mixing
+step，然后将结果作为最终的输出。</p>
+<p><strong>The avalanche effect（雪崩效应）</strong></p>
+<ol type="1">
+<li>修改输入的一个 bit，<span class="math inline">\(S\)</span>-box
+的输出会变化至少两个 bit。</li>
+<li>mixing permutations 能使得修改输入的一个 bit 时，多个 <span
+class="math inline">\(S\)</span>-box 的输入会发生变化。</li>
+</ol>
+<p>(skip)</p>
+<p><strong>Attacking a one-round SPN</strong> (skip)</p>
+<p><strong>Feistel networks</strong></p>
+<p>与 SPN 使用的 <span class="math inline">\(S\)</span>-box
+相反，Feistel networks 使用的是一个<strong>不可逆的</strong>函数。</p>
+<p>将 <span class="math inline">\(x\)</span> 分为两半 <span
+class="math inline">\(L_i\)</span> 和 <span
+class="math inline">\(R_i\)</span>，<span
+class="math display">\[L_{i}:=R_{i-1}\text{ and }R_{i}=L_{i-1}\oplus
+f_{i}(R_{i-1})\]</span></p>
+<p>注意尽管 <span class="math inline">\(f\)</span>
+不一定可逆，但是Feistel networks是可逆的。</p>
+<p><strong>Attacking Reduced-Round Feistel Networks</strong> (skip)</p>
+<p><strong>DES - The Data Encryption Standard</strong> (skip)</p>
+<p><strong>3DES</strong> (skip)</p>
+<p><strong>AES - The Advanced Encryption Standard</strong> (skip)</p>
+<h3 id="压缩函数和哈希函数">压缩函数和哈希函数</h3>
+<p><strong>Davies–Meyer construction</strong> 可以使用 block cipher
+构造压缩函数，</p>
+<p><span class="math display">\[
+h(k,x)\overset{\text{def}}{=}F_k(x)\oplus x
+\]</span></p>
+<p>然后对 <span class="math inline">\(h\)</span> 使用 Merkle–Damgård
+变换。</p>
+<blockquote>
+<p>If <span class="math inline">\(F\)</span> is modeled as an ideal
+cipher, then any attacker making <span class="math inline">\(q\)</span>
+queries to <span class="math inline">\(F\)</span> or <span
+class="math inline">\(F^{−1}\)</span> can find a collision in the
+Davies–Meyer construction with probability at most <span
+class="math inline">\({q^2}/2^{\ell}\)</span>.</p>
+</blockquote>
+<p>（证明 skip）</p>
+<p><strong>MD5</strong> 现在已经被破解的上古遗留哈希（</p>
+<p><strong>SHA-1 (Secure Hash Algorithms)</strong>
+不再推荐使用的哈希</p>
+<p><strong>SHA-2</strong> 包含 <strong>SHA-256</strong> 和
+<strong>SHA-512</strong>，是目前推荐使用的比较安全的哈希函数。</p>
+<p><strong>SHA-3 (Keccak)</strong> NIST
+举办了一场持续几年的哈希函数设计比赛，然后Keccak赢了，他设计的哈希成为了
+SHA-3，差不多就是回事（</p>
+<p>SHA-3 没有使用 Merkle–Damgård 变换，它的核心 primitive 是一个没有 key
+的，block length 为 <span class="math inline">\(1600\)</span> 的
+permutaion <span class="math inline">\(P\)</span>，它通过 <strong>sponge
+contruction</strong>
+直接构造哈希函数（与之相对的，通常的做法是先构造压缩函数）。如果 <span
+class="math inline">\(P\)</span> 是随机排列，那么得到的哈希函数是
+collision resistant 的。</p>
+<p>random permutation model 比 ideal cipher model 要弱，可以定义 <span
+class="math inline">\(P(x)=F(0^n,x)\)</span>，从一个 ideal cipher model
+得到一个 random permutation model。</p>
+<p>sponge construction 的具体细节</p>
+<blockquote>
+<p>Fix <span class="math inline">\(P :\{0, 1\}^{\ell} \to \{0,
+1\}^{\ell}\)</span> and constants <span class="math inline">\(r, c,
+v\)</span> as in the text and <span class="math inline">\(\lambda \geq
+1\)</span>. Hash function <span class="math inline">\(H\)</span>, on
+input <span class="math inline">\(\hat m \in \{0, 1\}^∗\)</span>,
+does:</p>
+<p><strong>(Padding)</strong> Append a <span
+class="math inline">\(1\)</span> to <span class="math inline">\(\hat
+m\)</span> followed by enough zeros so that the length of the resulting
+string is a multiple of <span class="math inline">\(r\)</span>. Parse
+the resulting string as the sequence of <span
+class="math inline">\(r\)</span>-bit blocks <span
+class="math inline">\(m_1,...,m_t\)</span>.</p>
+<p><strong>(Absorbing phase)</strong> Set <span
+class="math inline">\(y_0 := 0^{\ell}\)</span>. Then for <span
+class="math inline">\(i=1,...,t\)</span> do:</p>
+<ul>
+<li><span class="math inline">\(x_i:= y_{i−1}\oplus
+(m_i||0^c)\)</span>.</li>
+<li><span class="math inline">\(y_i:=P(x_i)\)</span>.</li>
+</ul>
+<p><strong>(Squeezing phase)</strong> Set <span
+class="math inline">\(y_1^∗:=y_t\)</span>, and let <span
+class="math inline">\(h_1\)</span> be the first <span
+class="math inline">\(v\)</span> bits of <span
+class="math inline">\(y_1^∗\)</span>.Then for <span
+class="math inline">\(i=2,...,\lambda\)</span> do</p>
+<ul>
+<li><span class="math inline">\(y_i^∗:=P(y_{i−1}^∗)\)</span>.</li>
+<li>Let <span class="math inline">\(h_i\)</span> be the first <span
+class="math inline">\(v\)</span> bits of <span
+class="math inline">\(z_i^∗\)</span>.</li>
+</ul>
+<p><strong>(Output)</strong> Output <span
+class="math inline">\(h_1||\cdots||h_{\lambda}\)</span>.</p>
+</blockquote>
+<p>简单地说，</p>
+<ol type="1">
+<li><span class="math inline">\(y_0=0^n\)</span></li>
+<li><em>absorbing phase</em> 将 <span class="math inline">\(y_i\)</span>
+的前 <span class="math inline">\(r\)</span> 位与 <span
+class="math inline">\(m_i\)</span> 求异或，<span
+class="math inline">\(y_i = P(y_{i-1}\oplus m_i)\)</span></li>
+<li><em>squeezing phase</em> 不断输出 <span
+class="math inline">\(y_i\)</span> 的前 <span
+class="math inline">\(v\)</span> 位，<span
+class="math inline">\(y_i=P(y_{i-1})\)</span></li>
+</ol>
+<blockquote>
+<p>Let <span class="math inline">\(H\)</span> denote Construction 7.6
+(就是 sponge construction) with <span class="math inline">\(\lambda =
+1\)</span> (squeezing phase 的长度，决定输出的长度). If <span
+class="math inline">\(P\)</span> is modeled as a random permutation,
+then any attacker making <span class="math inline">\(q\)</span> queries
+to <span class="math inline">\(P\)</span> or <span
+class="math inline">\(P^{−1}\)</span> can find a collision in <span
+class="math inline">\(H\)</span> with probability at most <span
+class="math inline">\(\frac{q^2}{2^v}+\frac{q\cdot(q+1)}2\)</span>.</p>
+</blockquote>
+<p>(证明 skip)</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/crypto/" rel="tag"># crypto</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2024/06/28/modern-crypto-6/" rel="prev" title="Introduction to Modern Cryptography(6)">
+      <i class="fa fa-chevron-left"></i> Introduction to Modern Cryptography(6)
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2024/06/30/modern-crypto-8/" rel="next" title="Introduction to Modern Cryptography(8)">
+      Introduction to Modern Cryptography(8) <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#introduction-to-modern-cryptography-reading-notes"><span class="nav-number">1.</span> <span class="nav-text">Introduction
+to Modern Cryptography Reading Notes</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#practical-constructions-of-symmetric-key-primitives"><span class="nav-number">1.1.</span> <span class="nav-text">7 Practical
+Constructions of Symmetric-Key Primitives</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B5%81%E5%AF%86%E7%A0%81"><span class="nav-number">1.1.1.</span> <span class="nav-text">流密码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E7%BB%84%E5%AF%86%E7%A0%81"><span class="nav-number">1.1.2.</span> <span class="nav-text">分组密码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8E%8B%E7%BC%A9%E5%87%BD%E6%95%B0%E5%92%8C%E5%93%88%E5%B8%8C%E5%87%BD%E6%95%B0"><span class="nav-number">1.1.3.</span> <span class="nav-text">压缩函数和哈希函数</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Louhc</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">21</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Louhc</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+</body>
+</html>

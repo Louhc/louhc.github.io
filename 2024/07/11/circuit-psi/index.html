@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"louhc.github.io","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="明天组会讲Circuit PSI，事先预习一下前置知识 参考资料： 【知乎专栏】隐私集合求交(Private Set Intersection)问题综述 PSI 隐私求交(Private Set Intersection, PSI)可能是被研究最多的具体的多方安全计算（Secure Multiparty Computation, MPC）协议。PSI本质上是一种特殊的多方安全计算协">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Circuit PSI">
+<meta property="og:url" content="https://louhc.github.io/2024/07/11/circuit-psi/index.html">
+<meta property="og:site_name" content="Hello, I&#39;m Louhc">
+<meta property="og:description" content="明天组会讲Circuit PSI，事先预习一下前置知识 参考资料： 【知乎专栏】隐私集合求交(Private Set Intersection)问题综述 PSI 隐私求交(Private Set Intersection, PSI)可能是被研究最多的具体的多方安全计算（Secure Multiparty Computation, MPC）协议。PSI本质上是一种特殊的多方安全计算协">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://louhc.github.io/img/OblivSim_and_PrivSim.png">
+<meta property="og:image" content="https://louhc.github.io/img/Aut.png">
+<meta property="article:published_time" content="2024-07-11T02:46:47.000Z">
+<meta property="article:modified_time" content="2024-09-24T12:31:31.374Z">
+<meta property="article:author" content="Louhc">
+<meta property="article:tag" content="crypto">
+<meta property="article:tag" content="mpa">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://louhc.github.io/img/OblivSim_and_PrivSim.png">
+
+<link rel="canonical" href="https://louhc.github.io/2024/07/11/circuit-psi/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Circuit PSI | Hello, I'm Louhc</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Hello, I'm Louhc</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://louhc.github.io/2024/07/11/circuit-psi/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Louhc">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hello, I'm Louhc">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Circuit PSI
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-07-10 18:46:47" itemprop="dateCreated datePublished" datetime="2024-07-10T18:46:47-08:00">2024-07-10</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-09-24 04:31:31" itemprop="dateModified" datetime="2024-09-24T04:31:31-08:00">2024-09-24</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>明天组会讲Circuit PSI，事先预习一下前置知识</p>
+<p>参考资料：</p>
+<p><a
+target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/586433710">【知乎专栏】隐私集合求交(Private
+Set Intersection)问题综述</a></p>
+<h2 id="psi">PSI</h2>
+<p><strong>隐私求交(Private Set Intersection,
+PSI)</strong>可能是被研究最多的具体的多方安全计算（Secure Multiparty
+Computation,
+MPC）协议。PSI本质上是一种特殊的多方安全计算协议：计算双方各自有一个集合，要求双方协作共同计算出两者集合的交集，计算过程中（除了交集部分）不泄露任何和各自集合相关的信息。</p>
+<p>标准的PSI分为几大类：<strong>基于密钥交换</strong>（Diffie-Hellman
+key exchange based）、<strong>基于透明传输</strong> (oblivious transfer
+based, OT-based)、<strong>基于透明键-值</strong>(oblivious key-value
+stores based, OKVS-based)、<strong>基于透明向量线性估值</strong>(Vector
+Oblivious Linear Evaluation,
+VOLE-based)、<strong>基于多项式操作</strong>(polynomial
+manipulation)、<strong>基于分支程序</strong>(Branching Program,
+BP)。</p>
+<p>除此之外还有<strong>隐私求交集基数</strong>(Private Intersection
+Cardinality)、<strong>阈值隐私求交</strong>(Threshold Private Set
+Intersection)、<strong>电路隐私求交</strong>(Circuit-PSI)、<strong>模糊隐私求交</strong>(Fuzzy-PSI)等变体。</p>
+<h2 id="电路隐私求交circuit-psi">电路隐私求交(Circuit-PSI)</h2>
+<p>Circuit-PSI 的开篇之作：<a
+target="_blank" rel="noopener" href="https://www.semanticscholar.org/paper/Private-Set-Intersection%3A-Are-Garbled-Circuits-than-Huang-Evans/14720266a35ced804438cdf06bc8d151e7e9903c">Private
+set intersection: Are garbled circuits better than custom
+protocols?</a></p>
+<h3 id="yaos-garbled-circuits">Yao’s Garbled Circuits</h3>
+<p><a
+target="_blank" rel="noopener" href="https://web.mit.edu/sonka89/www/papers/2017ygc.pdf">reference</a></p>
+<p>Evan 和 Ginny
+正在决定是否进行合作，我们希望如果其中一方不希望进行合作，那么他不会知道对方的态度。使用
+<strong>Yao’s Garbled Circuits</strong> 可以实现这一点，其中 Ginny 扮演
+garbled circuit generator(or garbler) 的角色，负责生成一个混淆 AND
+门；Evan 扮演 evaluator 的角色，负责对 AND 门求值。</p>
+<p>Ginny 生成四个随机串 <span class="math inline">\(W^0_G\)</span>,
+<span class="math inline">\(W^1_G\)</span>, <span
+class="math inline">\(W^0_E\)</span>, <span
+class="math inline">\(W^1_E\)</span>，表示双方的选择。用 <span
+class="math inline">\(g\)</span> 和 <span
+class="math inline">\(e\)</span>（它们的值为 <span
+class="math inline">\(0\)</span> 或 <span
+class="math inline">\(1\)</span>） 代表双方的选择，<span
+class="math inline">\(H(W^g_G,W^e_E)\)</span>
+生成一个对称加密密钥，用来加密 <span class="math inline">\(g\land
+e\)</span> 的结果。混淆门包括四个<strong>乱序</strong>的密文，<span
+class="math inline">\(\text{Enc}(H(W^g_G,W^e_E),g\land
+e),g=0/1,e=0/1\)</span>。</p>
+<p>Evan 使用<strong>透明传输(Oblivious Transfer, OT)</strong>，在不告知
+Ginny <span class="math inline">\(e\)</span> 的值的同时获取 <span
+class="math inline">\(W^e_E\)</span>。同时 Ginny 将 <span
+class="math inline">\(W^g_G\)</span> 发送给 Evan。然后 Evan 就可以根据
+<span class="math inline">\(H(W^g_G,W^e_E)\)</span> 解密结果了。</p>
+<p>需要注意的一点是，Evan
+需要知道解密是否成功，因此直接将密钥和结果XOR是不行的。</p>
+<p><strong>定义</strong></p>
+<blockquote>
+<p>A garbling scheme <span class="math inline">\(\mathcal G\)</span>
+consists of four polynomial-time algorithms <span
+class="math inline">\((\text{Gb}, \text{En}, \text{Ev},
+\text{De})\)</span>.</p>
+<ol type="1">
+<li><span class="math inline">\(\text{Gb}(1^{\lambda}, f)\to (F, e,
+d)\)</span> <br/> The garbling algorithm <span
+class="math inline">\(\text{Gb}\)</span> takes in the security parameter
+and a circuit <span class="math inline">\(f\)</span>, and returns a
+garbled circuit <span class="math inline">\(F\)</span>, encoding
+information <span class="math inline">\(e\)</span>, and decoding
+information <span class="math inline">\(d\)</span>.</li>
+<li><span class="math inline">\(\text{En}(e, x)\to X\)</span> <br/> The
+encoding algorithm <span class="math inline">\(\text{En}\)</span> takes
+in the encoding information <span class="math inline">\(e\)</span> and
+an input <span class="math inline">\(x\)</span>, and returns a garbled
+input <span class="math inline">\(X\)</span>.</li>
+<li><span class="math inline">\(\text{Ev}(F, X)\to Y\)</span> <br/> The
+evaluation algorithm <span class="math inline">\(\text{Ev}\)</span>
+takes in the garbled circuit <span class="math inline">\(F\)</span> and
+the garbled input <span class="math inline">\(X\)</span>, and returns a
+garbled output <span class="math inline">\(Y\)</span>.</li>
+<li><span class="math inline">\(\text{De}(d, Y)\to y\)</span> <br/> The
+decoding algorithm <span class="math inline">\(\text{De}\)</span> takes
+in the decoding information <span class="math inline">\(d\)</span> and
+the garbled output <span class="math inline">\(Y\)</span>, and returns
+the plaintext output <span class="math inline">\(y\)</span>.</li>
+</ol>
+<p>A garbling scheme <span class="math inline">\(\mathcal G =
+(\text{Gb}, \text{En}, \text{Ev}, \text{De})\)</span> is projective if
+<span class="math inline">\(e\)</span> consists of a <span
+class="math inline">\(2n\)</span> wire labels, where <span
+class="math inline">\(n\)</span> is the number of input bits. We denote
+those wire labels as <span class="math inline">\((X_i^0,
+X_i^1)_{i\in\text{inindices}}\)</span>. <span
+class="math inline">\(\text{En}(e,
+x=(v_i)_{i\in\text{inindices}})\)</span> then returns <span
+class="math inline">\(X=(X_i^{v_i})_{i\in\text{inindices}}\)</span>.
+Similarly, we call a garbling scheme output-projective if d consists of
+<span class="math inline">\(2\)</span> labels for each output bit, one
+corresponding to each possible value of that bit.</p>
+</blockquote>
+<p><strong>正确性</strong></p>
+<blockquote>
+<p>A garbling scheme <span class="math inline">\((\text{Gb}, \text{En},
+\text{Ev}, \text{De})\)</span> is correct if for all sufficiently large
+security parameters <span class="math inline">\(\lambda\)</span>, for
+all functions <span class="math inline">\(f\)</span> and inputs <span
+class="math inline">\(x\)</span>, <span
+class="math display">\[\text{Pr}[(F, e, d)\leftarrow
+\text{Gb}(1^{\lambda}, f):\text{De}(d, \text{Ev}(F, \text{En}(e,
+x)))=f(x)] = 1\]</span></p>
+</blockquote>
+<p><strong>安全性</strong></p>
+<p>[BHR12] 定义了三个安全概念：obliviousness，privacy 和
+authenticity。obliviousness 要求 <span class="math inline">\(F\)</span>
+和 <span class="math inline">\(X\)</span> 不会暴露关于 <span
+class="math inline">\(x\)</span> 的任何信息；privacy 要求通过 <span
+class="math inline">\(d\)</span> 无法获取除 <span
+class="math inline">\(y\)</span> 以外的关于 <span
+class="math inline">\(x\)</span> 的任何信息；authenticity 要求无法用
+<span class="math inline">\(F\)</span> 和 <span
+class="math inline">\(X\)</span> 伪造一个能被正确解码的 <span
+class="math inline">\(Y&#39;\neq\text{Ev}(F,X)\)</span>。</p>
+<p>关于这三种安全概念的测试的定义如下图</p>
+<p><img src="/img/OblivSim_and_PrivSim.png" /></p>
+<p><img src="/img/Aut.png" /></p>
+<h3 id="oblivious-transfer">Oblivious Transfer</h3>
+<p>参考资料：A Pragmatic Introduction to Secure Multi-Party
+Computation</p>
+<p>简单地说，在 1-out-of-2 OT 协议中，Sender <span
+class="math inline">\(\mathcal S\)</span> 有一个秘密比特串 <span
+class="math inline">\(x_0,x_1\in\{0,1\}^n\)</span>，Receiver <span
+class="math inline">\(\mathcal R\)</span> 选择一个比特 <span
+class="math inline">\(b\in\{0,1\}\)</span>，<span
+class="math inline">\(\mathcal R\)</span> 在不向 <span
+class="math inline">\(\mathcal S\)</span> 暴露 <span
+class="math inline">\(b\)</span> 的值的同时，得到 <span
+class="math inline">\(x_b\)</span> 的值，且 <span
+class="math inline">\(\mathcal S\)</span> 不暴露 <span
+class="math inline">\(x_{\lnot b}\)</span> 的值。</p>
+<h3 id="circuit-psi">Circuit PSI</h3>
+<p>简而言之，Yao’s Garbled Circuits 提供了一种计算任意逻辑电路 <span
+class="math inline">\(C\)</span>
+的安全协议。因此，我们只需要构造这个逻辑电路。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/crypto/" rel="tag"># crypto</a>
+              <a href="/tags/mpa/" rel="tag"># mpa</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2024/07/07/ProofsArgsAndZK4/" rel="prev" title="Proofs, Arguments, and Zero-Knowledge (4)">
+      <i class="fa fa-chevron-left"></i> Proofs, Arguments, and Zero-Knowledge (4)
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2024/07/12/intro-to-MPC-2/" rel="next" title="A Pragmatic Introduction to Secure Multi-Party Computation (2) 定义">
+      A Pragmatic Introduction to Secure Multi-Party Computation (2) 定义 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#psi"><span class="nav-number">1.</span> <span class="nav-text">PSI</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%94%B5%E8%B7%AF%E9%9A%90%E7%A7%81%E6%B1%82%E4%BA%A4circuit-psi"><span class="nav-number">2.</span> <span class="nav-text">电路隐私求交(Circuit-PSI)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#yaos-garbled-circuits"><span class="nav-number">2.1.</span> <span class="nav-text">Yao’s Garbled Circuits</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#oblivious-transfer"><span class="nav-number">2.2.</span> <span class="nav-text">Oblivious Transfer</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#circuit-psi"><span class="nav-number">2.3.</span> <span class="nav-text">Circuit PSI</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Louhc</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">21</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Louhc</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+</body>
+</html>
