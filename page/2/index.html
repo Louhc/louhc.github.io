@@ -160,6 +160,367 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://louhc.github.io/2024/07/12/intro-to-MPC-2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Louhc">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hello, I'm Louhc">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/07/12/intro-to-MPC-2/" class="post-title-link" itemprop="url">A Pragmatic Introduction to Secure Multi-Party Computation (2) 定义</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-07-11 14:32:21" itemprop="dateCreated datePublished" datetime="2024-07-11T14:32:21-08:00">2024-07-11</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-09-24 04:31:31" itemprop="dateModified" datetime="2024-09-24T04:31:31-08:00">2024-09-24</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Reading-Notes/" itemprop="url" rel="index"><span itemprop="name">Reading Notes</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="a-pragmatic-introduction-to-secure-multi-party-computation-reading-notes"><em>A
+Pragmatic Introduction to Secure Multi-Party Computation</em> Reading
+Notes</h1>
+<h2 id="defining-multi-party-computation">2 Defining Multi-Party
+Computation</h2>
+<h3 id="secret-sharing">Secret Sharing</h3>
+<blockquote>
+<p>Let <span class="math inline">\(D\)</span> be the domain of secrets
+and <span class="math inline">\(D_1\)</span> be the domain of shares.
+Let <span class="math inline">\(\text{Shr}:D\to D_1^n\)</span> be a
+(possibly randomized) sharing algorithm, and <span class="math inline">\(\text{Rec} : D^k_1\to D\)</span> be a
+reconstruction algorithm. A <span class="math inline">\((t,
+n)\)</span>-secret sharing scheme is a pair of algorithms <span class="math inline">\((\text{Shr}, \text{Rec})\)</span> that satisfies
+these two properties:</p>
+<ul>
+<li>Correctness. Let <span class="math inline">\((s_1, s_2,...,s_n) =
+\text{Shr}(s)\)</span>. Then, <span class="math inline">\(\text{Pr}[\forall k \geq t,
+\text{Rec}(s_{i_1},..., s_{i_k}) = s] = 1\)</span>.</li>
+<li>Perfect Privacy. Any set of shares of size less than <span class="math inline">\(t\)</span> does not reveal anything about the
+secret in the information theoretic sense. More formally, for any two
+secrets <span class="math inline">\(a, b\in D\)</span> and any possible
+vector of shares <span class="math inline">\(v=v_1, v_2, ...,
+v_k\)</span> , such that <span class="math inline">\(k &lt;
+t\)</span>,<span class="math inline">\(\text{Pr}[v = \text{Shr}(a)|_k ]
+= \text{Pr}[v = \text{Shr}(b)|_k ]\)</span>, where <span class="math inline">\(|_k\)</span> denotes appropriate projection on a
+subspace of <span class="math inline">\(k\)</span> elements.</li>
+</ul>
+</blockquote>
+<h3 id="real-ideal-paradigm">Real-Ideal Paradigm</h3>
+<p>在 <strong>Ideal World</strong>
+中，每一方都和一个<strong>可信</strong>方 <span class="math inline">\(\mathcal T\)</span> 进行交流，他们将自己的输入
+<span class="math inline">\(x_i\)</span> 发送给 <span class="math inline">\(\mathcal T\)</span>，<span class="math inline">\(\mathcal T\)</span> 计算出 <span class="math inline">\(\mathcal F(x_1,...,x_n)\)</span>
+并将结果返回给每一个人。</p>
+<p>在 <strong>Real World</strong> 中，每一方都有一个 <span class="math inline">\(\pi_i\)</span>，根据 <span class="math inline">\(x_i\)</span>、一个随机带、之前接收到的信息等来决定下一步给哪一方发送什么消息，或者终止并得到最终的输出。</p>
+<p>如果攻击者在 <strong>Ideal World</strong> 和 <strong>Real
+World</strong> 中能做的事一样，称该协议 <span class="math inline">\(\pi\)</span> 是安全的。</p>
+<h3 id="semi-honest-security">Semi-Honest Security</h3>
+<blockquote>
+<p>A semi-honest adversary is one who corrupts parties but follows the
+protocol as specified.</p>
+</blockquote>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2024/07/12/intro-to-MPC-2/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://louhc.github.io/2024/07/11/circuit-psi/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Louhc">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hello, I'm Louhc">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/07/11/circuit-psi/" class="post-title-link" itemprop="url">Circuit PSI</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-07-10 18:46:47" itemprop="dateCreated datePublished" datetime="2024-07-10T18:46:47-08:00">2024-07-10</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-09-24 04:31:31" itemprop="dateModified" datetime="2024-09-24T04:31:31-08:00">2024-09-24</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>明天组会讲Circuit PSI，事先预习一下前置知识</p>
+<p>参考资料：</p>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/586433710">【知乎专栏】隐私集合求交(Private
+Set Intersection)问题综述</a></p>
+<h2 id="psi">PSI</h2>
+<p><strong>隐私求交(Private Set Intersection,
+PSI)</strong>可能是被研究最多的具体的多方安全计算（Secure Multiparty
+Computation,
+MPC）协议。PSI本质上是一种特殊的多方安全计算协议：计算双方各自有一个集合，要求双方协作共同计算出两者集合的交集，计算过程中（除了交集部分）不泄露任何和各自集合相关的信息。</p>
+<p>标准的PSI分为几大类：<strong>基于密钥交换</strong>（Diffie-Hellman
+key exchange based）、<strong>基于透明传输</strong> (oblivious transfer
+based, OT-based)、<strong>基于透明键-值</strong>(oblivious key-value
+stores based, OKVS-based)、<strong>基于透明向量线性估值</strong>(Vector
+Oblivious Linear Evaluation,
+VOLE-based)、<strong>基于多项式操作</strong>(polynomial
+manipulation)、<strong>基于分支程序</strong>(Branching Program,
+BP)。</p>
+<p>除此之外还有<strong>隐私求交集基数</strong>(Private Intersection
+Cardinality)、<strong>阈值隐私求交</strong>(Threshold Private Set
+Intersection)、<strong>电路隐私求交</strong>(Circuit-PSI)、<strong>模糊隐私求交</strong>(Fuzzy-PSI)等变体。</p>
+<h2 id="电路隐私求交circuit-psi">电路隐私求交(Circuit-PSI)</h2>
+<p>Circuit-PSI 的开篇之作：<a target="_blank" rel="noopener" href="https://www.semanticscholar.org/paper/Private-Set-Intersection%3A-Are-Garbled-Circuits-than-Huang-Evans/14720266a35ced804438cdf06bc8d151e7e9903c">Private
+set intersection: Are garbled circuits better than custom
+protocols?</a></p>
+<h3 id="yaos-garbled-circuits">Yao’s Garbled Circuits</h3>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2024/07/11/circuit-psi/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://louhc.github.io/2024/07/01/modern-crypto-13/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Louhc">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hello, I'm Louhc">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/07/01/modern-crypto-13/" class="post-title-link" itemprop="url">Introduction to Modern Cryptography(13)</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-07-01 00:03:11" itemprop="dateCreated datePublished" datetime="2024-07-01T00:03:11-08:00">2024-07-01</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-09-24 04:31:31" itemprop="dateModified" datetime="2024-09-24T04:31:31-08:00">2024-09-24</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Reading-Notes/" itemprop="url" rel="index"><span itemprop="name">Reading Notes</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="introduction-to-modern-cryptography-reading-notes"><em>Introduction
+to Modern Cryptography</em> Reading Notes</h1>
+<h2 id="digital-signature-schemes">13 Digital Signature Schemes</h2>
+<h3 id="定义">定义</h3>
+<blockquote>
+<p>A (digital) signature scheme consists of three probabilistic
+polynomial-time algorithms <span class="math inline">\((\text{Gen},
+\text{Sign}, \text{Vrfy})\)</span> such that:</p>
+<ol type="1">
+<li>The key-generation algorithm <span class="math inline">\(\text{Gen}\)</span> takes as input a security
+parameter <span class="math inline">\(1^n\)</span> and outputs a pair of
+keys <span class="math inline">\((pk, sk)\)</span>. These are called the
+public key and the private key, respectively. We assume that <span class="math inline">\(pk\)</span> and <span class="math inline">\(sk\)</span> each has length at least <span class="math inline">\(n\)</span>, and that <span class="math inline">\(n\)</span> can be determined from <span class="math inline">\(pk\)</span> or <span class="math inline">\(sk\)</span>.</li>
+<li>The signing algorithm <span class="math inline">\(\text{Sign}\)</span> takes as input a private key
+<span class="math inline">\(sk\)</span> and a message <span class="math inline">\(m\)</span> from some message space (that may
+depend on <span class="math inline">\(pk\)</span>). It outputs a
+signature <span class="math inline">\(\sigma\)</span>, and we write this
+as <span class="math inline">\(\sigma\leftarrow
+\text{Sign}_{sk}(m)\)</span>.</li>
+<li>The deterministic verification algorithm <span class="math inline">\(\text{Vrfy}\)</span> takes as input a public key
+<span class="math inline">\(pk\)</span>, a message <span class="math inline">\(m\)</span>, and a signature <span class="math inline">\(\sigma\)</span>. It outputs a bit <span class="math inline">\(b\)</span>, with <span class="math inline">\(b =
+1\)</span> meaning valid and <span class="math inline">\(b = 0\)</span>
+meaning invalid. We write this as <span class="math inline">\(b :=
+\text{Vrfy}_{pk}(m, \sigma)\)</span>.</li>
+</ol>
+<p>It is required that except with negligible probability over <span class="math inline">\((pk, sk)\)</span> output by <span class="math inline">\(\text{Gen}(1^n)\)</span>, it holds that <span class="math inline">\(\text{Vrfy}_{pk}(m, \text{Sign}_{sk}(m)) =
+1\)</span> for every (legal) message <span class="math inline">\(m\)</span>.</p>
+<p>If there is a function <span class="math inline">\(\ell\)</span> such
+that for every <span class="math inline">\((pk, sk)\)</span> output by
+<span class="math inline">\(\text{Gen}(1^n)\)</span> the message space
+is <span class="math inline">\(\{0, 1\}^{\ell(n)}\)</span>, then we say
+that <span class="math inline">\((\text{Gen}, \text{Sign},
+\text{Vrfy})\)</span> is a signature scheme for messages of length <span class="math inline">\(\ell(n)\)</span>.</p>
+</blockquote>
+<blockquote>
+<p>The signature experiment <span class="math inline">\(\text{Sig-forge}_{\mathcal{A},\Pi(n)}\)</span>:</p>
+<ol type="1">
+<li><span class="math inline">\(\text{Gen}(1^n)\)</span> is run to
+obtain keys <span class="math inline">\((pk, sk)\)</span>.</li>
+<li>Adversary <span class="math inline">\(\mathcal{A}\)</span> is given
+<span class="math inline">\(pk\)</span> and access to an oracle <span class="math inline">\(\text{Sign}_{sk}(\cdot)\)</span>. The adversary
+then outputs <span class="math inline">\((m, \sigma)\)</span>. Let <span class="math inline">\(\mathcal Q\)</span> denote the set of all queries
+that <span class="math inline">\(\mathcal{A}\)</span> asked its
+oracle.</li>
+<li><span class="math inline">\(\mathcal{A}\)</span> succeeds if and
+only if (1) <span class="math inline">\(\text{Vrfy}_{pk}(m, \sigma) =
+1\)</span> and (2) <span class="math inline">\(m \notin \mathcal
+Q\)</span>. In this case the output of the experiment is defined to be
+<span class="math inline">\(1\)</span>.</li>
+</ol>
+</blockquote>
+<blockquote>
+<p>A signature scheme <span class="math inline">\(\Pi=(\text{Gen},\text{Sign},\text{Vrfy})\)</span>
+is existentially unforgeable under an adaptive chosen-message attack, or
+just secure, if for all probabilistic polynomial-time adversaries <span class="math inline">\(\mathcal{A}\)</span>, there is a negligible
+function <span class="math inline">\(\text{negl}\)</span> such that:
+<span class="math display">\[\text{Pr}[\text{Sig-forge}_{\mathcal{A},\Pi}(n) =
+1]\leq\text{negl}(n)\]</span></p>
+</blockquote>
+<p>与 MAC 同理，可以定义<strong>强</strong>安全。</p>
+<hr>
+<h3 id="hash-and-sign">Hash-and-Sign</h3>
+<p>对于任意长度的消息，可以先对它用哈希映射到一个固定长度的串，然后对其进行数字签证。（和
+Hash-and-MAC 差不多）</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2024/07/01/modern-crypto-13/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://louhc.github.io/2024/06/30/modern-crypto-12/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -917,351 +1278,6 @@ resistant</strong>的。</p>
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://louhc.github.io/2024/06/26/modern-crypto-5/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Louhc">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Hello, I'm Louhc">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2024/06/26/modern-crypto-5/" class="post-title-link" itemprop="url">Introduction to Modern Cryptography(5) 认证加密</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2024-06-26 00:00:00" itemprop="dateCreated datePublished" datetime="2024-06-26T00:00:00-08:00">2024-06-26</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-09-24 04:31:31" itemprop="dateModified" datetime="2024-09-24T04:31:31-08:00">2024-09-24</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Reading-Notes/" itemprop="url" rel="index"><span itemprop="name">Reading Notes</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="introduction-to-modern-cryptography-reading-notes"><em>Introduction
-to Modern Cryptography</em> Reading Notes</h1>
-<h2 id="cca-security-and-authenticated-encryption">5 CCA-Security and
-Authenticated Encryption</h2>
-<p>这一章讨论的是如何保证 “secrecy in the presence of an active
-adversary”。</p>
-<h3 id="选择密文攻击和-cca-安全">选择密文攻击和 CCA 安全</h3>
-<p>攻击者生成一段密文并使接收者对其进行解密，这样的攻击行为称为<strong>选择密文攻击(chosen-ciphertext
-attack)</strong>。</p>
-<p><strong>Padding-Oracle Attacks</strong></p>
-<p>对于使用 <strong>PKSC #7 标准</strong>(如果消息需要填充 <span class="math inline">\(b\)</span> 个 byte，则在消息后填充 <span class="math inline">\(0\text{x}\overbrace{bb...b}^{b\text{
-times}}\)</span>，其中 <span class="math inline">\(b&gt;0\)</span>) 的
-CBC-mode 加密，如果接收者收到了一个不符合 PKSC #7
-标准的消息，则会发出一个 “bad padding”
-错误，如果攻击者能探知这个信息，就可以进行攻击。</p>
-<p>比如，对于有两个 block 的 CBC，<span class="math inline">\(m_2=c_1\oplus F^{-1}_k(c_2)\)</span>，那么通过发送
-<span class="math inline">\((c_1\oplus\Delta,c_2)\)</span>，解密后会得到
-<span class="math inline">\((m_1&#39;,m_2\oplus
-\Delta)\)</span>，那么通过枚举 <span class="math inline">\(\Delta\)</span> 的每一个 byte，可以破解出 <span class="math inline">\(b\)</span> 的值，然后可以用类似的方式破解出 <span class="math inline">\(m_2\)</span>, <span class="math inline">\(m_1\)</span> 的值。</p>
-<p>下面定义 CCA-secure</p>
-<blockquote>
-<p>The CCA indistinguishability experiment <span class="math inline">\(\text{PrivK}^{\text{cca}}_{\mathcal{A},\Pi(n)}\)</span>:</p>
-<ol type="1">
-<li>A key <span class="math inline">\(k\)</span> is generated by running
-<span class="math inline">\(\text{Gen}(1^n)\)</span>.</li>
-<li><span class="math inline">\(\mathcal{A}\)</span> is given input
-<span class="math inline">\(1^n\)</span> and oracle access to <span class="math inline">\(\text{Enc}_k(\cdot)\)</span> and <span class="math inline">\(\text{Dec}_k(\cdot)\)</span>.It outputs a pair of
-equal-length messages <span class="math inline">\(m_0,
-m_1\)</span>.</li>
-<li>A uniform bit <span class="math inline">\(b \in \{0, 1\}\)</span> is
-chosen, and then a challenge ciphertext <span class="math inline">\(c
-\leftarrow \text{Enc}_k(m_b)\)</span> is computed and given to <span class="math inline">\(\mathcal{A}\)</span>.</li>
-<li>The adversary <span class="math inline">\(\mathcal{A}\)</span>
-continues to have oracle access to <span class="math inline">\(\text{Enc}_k(\cdot)\)</span> and <span class="math inline">\(\text{Dec}_k(\cdot)\)</span>, but is not allowed
-to query the latter on the challenge ciphertext itself. Eventually,
-<span class="math inline">\(\mathcal{A}\)</span> outputs a bit <span class="math inline">\(b&#39;\)</span>.</li>
-<li>The output of the experiment is <span class="math inline">\(1\)</span> if <span class="math inline">\(b&#39; =
-b\)</span>, and <span class="math inline">\(0\)</span> otherwise.If the
-output of the experiment is <span class="math inline">\(1\)</span>, we
-say that <span class="math inline">\(\mathcal{A}\)</span> succeeds.</li>
-</ol>
-</blockquote>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2024/06/26/modern-crypto-5/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://louhc.github.io/2024/06/25/modern-crypto-4/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Louhc">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Hello, I'm Louhc">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2024/06/25/modern-crypto-4/" class="post-title-link" itemprop="url">Introduction to Modern Cryptography(4) 认证安全</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2024-06-25 00:00:00" itemprop="dateCreated datePublished" datetime="2024-06-25T00:00:00-08:00">2024-06-25</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-09-24 04:31:31" itemprop="dateModified" datetime="2024-09-24T04:31:31-08:00">2024-09-24</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Reading-Notes/" itemprop="url" rel="index"><span itemprop="name">Reading Notes</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="introduction-to-modern-cryptography-reading-notes"><em>Introduction
-to Modern Cryptography</em> Reading Notes</h1>
-<h2 id="message-authentication-codes">4 Message Authentication
-Codes</h2>
-<h3 id="mac的定义">MAC的定义</h3>
-<p>我们需要保证<strong>消息可靠性(message
-integrity)</strong>，以应对攻击者可能会注入或修改信息的情况，为此需要引入新的机制
-<strong>message authentication code (MAC)</strong>。</p>
-<blockquote>
-<p>A message authentication code (or MAC) consists of three
-probabilistic polynomial-time algorithms <span class="math inline">\((\text{Gen},\text{Mac},\text{Vrfy})\)</span> such
-that:</p>
-<ol type="1">
-<li>The key-generation algorithm <span class="math inline">\(\text{Gen}\)</span> takes as input the security
-parameter <span class="math inline">\(1^n\)</span> and outputs a key
-<span class="math inline">\(k\)</span> with <span class="math inline">\(|k| \geq n\)</span>.</li>
-<li>The tag-generation algorithm <span class="math inline">\(\text{Mac}\)</span> takes as input a key <span class="math inline">\(k\)</span> and a message <span class="math inline">\(m \in \{0, 1\}^*\)</span>, and outputs a tag <span class="math inline">\(t\)</span>. Since this algorithm may be
-randomized, we write this as <span class="math inline">\(t \leftarrow
-\text{Mac}_k(m)\)</span>.</li>
-<li>The deterministic verification algorithm <span class="math inline">\(\text{Vrfy}\)</span> takes as input a key <span class="math inline">\(k\)</span>, a message <span class="math inline">\(m\)</span>, and a tag <span class="math inline">\(t\)</span>. It outputs a bit <span class="math inline">\(b\)</span>, with <span class="math inline">\(b =
-1\)</span> meaning <em>valid</em> and <span class="math inline">\(b =
-0\)</span> meaning <em>invalid</em>. We write this as <span class="math inline">\(b := \text{Vrfy}_k(m, t)\)</span>.</li>
-</ol>
-<p>It is required that for every <span class="math inline">\(n\)</span>,
-every key <span class="math inline">\(k\)</span> output by <span class="math inline">\(\text{Gen}(1^n)\)</span>, and every <span class="math inline">\(m \in \{0, 1\}^∗\)</span>, it holds that <span class="math inline">\(\text{Vrfy}_k(m, \text{Mac}_k(m)) =
-1\)</span>.</p>
-<p>If there is a function <span class="math inline">\(\ell\)</span> such
-that for every <span class="math inline">\(k\)</span> output by <span class="math inline">\(\text{Gen}(1^n)\)</span>, algorithm <span class="math inline">\(\text{Mac}_k\)</span> is only defined for messages
-<span class="math inline">\(m \in \{0, 1\}^{\ell(n)}\)</span>, then we
-call the scheme a fixed-length MAC for messages of length <span class="math inline">\(\ell(n)\)</span>.</p>
-</blockquote>
-<p>接下来就是关于 MAC 的安全测试和安全定义。</p>
-<blockquote>
-<p>The message authentication experiment <span class="math inline">\(\text{Mac-forge}_{\mathcal{A},\Pi(n)}\)</span>:</p>
-<ol type="1">
-<li>A key <span class="math inline">\(k\)</span> is generated by running
-<span class="math inline">\(\text{Gen}(1^n)\)</span>.</li>
-<li>The adversary <span class="math inline">\(\mathcal{A}\)</span> is
-given input <span class="math inline">\(1^n\)</span> and oracle access
-to <span class="math inline">\(\text{Mac}_k(\cdot)\)</span>.The
-adversary eventually outputs <span class="math inline">\((m,
-t)\)</span>. Let <span class="math inline">\(Q\)</span> denote the set
-of all queries that <span class="math inline">\(\mathcal{A}\)</span>
-submitted to its oracle.</li>
-<li><span class="math inline">\(\mathcal{A}\)</span> succeeds if and
-only if (1) <span class="math inline">\(\text{Vrfy}_k(m, t) = 1\)</span>
-and (2) <span class="math inline">\(m \notin Q\)</span>.In that case the
-output of the experiment is defined to be <span class="math inline">\(1\)</span>.</li>
-</ol>
-</blockquote>
-<p>也就是说，<span class="math inline">\(\mathcal{A}\)</span>
-能多次访问黑盒 <span class="math inline">\(\text{Mac}_k\)</span>，如果构造出任意一组<strong>能通过
-<span class="math inline">\(\text{Vrfy}\)</span>
-验证</strong>的，且自己<strong>没有把明文输入给 <span class="math inline">\(\text{Mac}_k\)</span></strong> 的 <span class="math inline">\((m,t)\)</span>，就算 <span class="math inline">\(\mathcal{A}\)</span> 成功。注意到，如果通过 <span class="math inline">\(t\)</span> 构造出一个 <span class="math inline">\(m\)</span>，使得 <span class="math inline">\((m,t)\)</span> 通过验证，那么 <span class="math inline">\(\mathcal{A}\)</span> 也是通过该测试的。</p>
-<p>对于安全的定义和之前类似，即通过测试的概率可忽略，就不再抄一遍了。</p>
-<p>上面的定义并没有预防 <strong>replay
-attacks</strong>，即攻击者可以重复发送一条信息（比如，转账请求）。这种问题一般在应用层面进行解决，比如在消息中添加编号或时间戳这类信息。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2024/06/25/modern-crypto-4/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://louhc.github.io/2024/06/25/pandoc-markdown-test/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Louhc">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Hello, I'm Louhc">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2024/06/25/pandoc-markdown-test/" class="post-title-link" itemprop="url">Pandoc Markdown test</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2024-06-24 22:28:48" itemprop="dateCreated datePublished" datetime="2024-06-24T22:28:48-08:00">2024-06-24</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-09-24 04:31:31" itemprop="dateModified" datetime="2024-09-24T04:31:31-08:00">2024-09-24</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>hexo 自带的 markdown 渲染器太拉了，老是和 mathjax
-冲突，包括但不限于把公式里的 <code>/</code> 和 <code>_</code> 认成
-markdown 语法</p>
-<p>所以改用 pandoc 了</p>
-<hr>
-<ol type="1">
-<li>Hello</li>
-<li>World</li>
-</ol>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">This is code</span><br></pre></td></tr></table></figure>
-<p><span class="math inline">\(\binom{n}{m}=\frac{n!}{m!(n-m)!}\)</span></p>
-<p><span class="math display">\[
-c\leftarrow \text{Enc}_k(m)
-\]</span></p>
-
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2024/06/25/pandoc-markdown-test/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1331,20 +1347,20 @@ c\leftarrow \text{Enc}_k(m)
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">21</span>
+          <span class="site-state-item-count">24</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-count">2</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-count">7</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
