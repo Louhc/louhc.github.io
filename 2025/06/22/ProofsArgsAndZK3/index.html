@@ -28,7 +28,7 @@
 <meta property="og:description" content="本篇笔记涵盖 《Proofs, Arguments, and Zero-Knowledge》 的第8章 ，第9章和第10章。">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2025-06-22T04:30:53.000Z">
-<meta property="article:modified_time" content="2025-06-25T00:28:05.435Z">
+<meta property="article:modified_time" content="2025-06-25T12:07:27.893Z">
 <meta property="article:author" content="Louhc">
 <meta property="article:tag" content="crypto">
 <meta property="article:tag" content="zk">
@@ -198,7 +198,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2025-06-24 16:28:05" itemprop="dateModified" datetime="2025-06-24T16:28:05-08:00">2025-06-24</time>
+                <time title="修改时间：2025-06-25 04:07:27" itemprop="dateModified" datetime="2025-06-25T04:07:27-08:00">2025-06-25</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -349,6 +349,26 @@ class="math inline">\(\mathcal{P}_2\)</span>
 <hr />
 <h3 id="an-efficient-mip-for-circuit-satisfaction">An Efficient MIP For
 Circuit Satisfaction</h3>
+<p>对于一个<strong>低深度</strong>电路，有一个简单的双证明者交互证明系统。其在第7章提到的系统基础上，将第二个证明者作为多项式承诺。具体来说，验证者和第一个证明者执行
+GKR 协议，证明 <span
+class="math inline">\(C(x,w)=y\)</span>，原来的协议中验证者要求证明者提供
+<span class="math inline">\(\widetilde{w}\)</span> 的承诺并打开 <span
+class="math inline">\(\widetilde{w}(r)\)</span>
+的值，现在验证者直接要求第二个证明者提供 <span
+class="math inline">\(\widetilde{w}(r)\)</span>
+的值，并且进行低次测试（Low Degree Tests）。</p>
+<p>如果低次测试使用 point-versus-line 测试，验证者随机选一条 <span
+class="math inline">\(\mathbb F^{\log n}\)</span> 上的包含 <span
+class="math inline">\(r\)</span> 的直线 <span
+class="math inline">\(\lambda\)</span>，要求第二个证明者提供一个等于
+<span class="math inline">\(\widetilde{w}\circ\lambda\)</span> 的单变量
+<span class="math inline">\(\log n\)</span>
+次多项式，验证者通过该多项式计算 <span
+class="math inline">\(\widetilde{w}(r)\)</span> 并与第一个证明者声称的
+<span class="math inline">\(\widetilde{w}(r)\)</span> 进行比对。</p>
+<p>该协议的一个缺点在于时间和深度成正比（<span
+class="math inline">\(O(d\log
+S)\)</span>）。更主要的缺点是证明大小很大。接下来我们将介绍一个更高效的协议。</p>
 <hr />
 <h3 id="a-succinct-argument-for-deep-circuits">A Succinct Argument for
 Deep Circuits</h3>
@@ -432,6 +452,45 @@ class="math inline">\(\mathcal{P}_i\)</span>
 <h3 id="compiling-a-pcp-into-a-succinct-argument">Compiling a PCP Into a
 Succinct Argument</h3>
 <hr />
+<h3
+id="a-pcp-of-quasilinear-length-for-arithmetic-circuit-satisfiability">A
+PCP of Quasilinear Length for Arithmetic Circuit Satisfiability</h3>
+<p><strong>引理 9.3</strong> 设 <span class="math inline">\(\mathbb
+F\)</span> 是一个域，<span class="math inline">\(H \subseteq \mathbb
+F\)</span>。对于 <span class="math inline">\(d \geq |H|\)</span>，一个
+<span class="math inline">\(\mathbb F\)</span> 上的 <span
+class="math inline">\(d\)</span> 次单变量多项式 <span
+class="math inline">\(g\)</span> 在 <span
+class="math inline">\(H\)</span> 上消失（即 <span
+class="math inline">\(g(\alpha) = 0\)</span> 对所有 <span
+class="math inline">\(\alpha \in H\)</span> 成立）当且仅当多项式 <span
+class="math inline">\(Z_H(t) := \prod_{\alpha \in H}(t -
+\alpha)\)</span> 整除 <span
+class="math inline">\(g\)</span>。换言之，当且仅当存在一个次数不超过
+<span class="math inline">\(d - |H|\)</span> 的多项式 <span
+class="math inline">\(h^*\)</span>，使得 <span class="math inline">\(g =
+Z_H \cdot h^*\)</span>。</p>
+<details>
+<summary>
+证明
+</summary>
+<p><strong>方向 1</strong>（充分性）：<br />
+若 <span class="math inline">\(g = Z_H \cdot h^*\)</span>，则对任意
+<span class="math inline">\(\alpha \in H\)</span>，有<br />
+<span class="math display">\[
+g(\alpha) = Z_H(\alpha) \cdot h^*(\alpha) = 0 \cdot h^*(\alpha) = 0,
+\]</span> 因此 <span class="math inline">\(g\)</span> 在 <span
+class="math inline">\(H\)</span> 上消失。</p>
+<strong>方向 2</strong>（必要性）：<br />
+若 <span class="math inline">\(g\)</span> 在 <span
+class="math inline">\(H\)</span> 上消失，则对每个 <span
+class="math inline">\(\alpha \in H\)</span>，多项式 <span
+class="math inline">\((t - \alpha)\)</span> 整除 <span
+class="math inline">\(g(t)\)</span>。因此，<span
+class="math inline">\(Z_H(t)\)</span> 作为这些线性因子的乘积，必然整除
+<span class="math inline">\(g\)</span>。
+</details>
+<hr />
 <h2 id="交互式预言机证明">10 交互式预言机证明</h2>
 <hr />
 <h3 id="iops-definition-and-associated-succinct-arguments">IOPs:
@@ -491,11 +550,13 @@ class="math inline">\(\sum_{j=1}^{n}h^{j\cdot m}=0\)</span>。</p>
 因此，对于任意多项式 <span class="math inline">\(q\)</span>，在 <span
 class="math inline">\(H\)</span> 上求和时，次数 <span
 class="math inline">\(\geq1\)</span> 的项都会被消掉，只剩下常数项，即
-$q(0)。因此 <span class="math inline">\(\sum_{a\in H}q(a)=nq(0)\)</span>
+<span class="math inline">\(q(0)\)</span>。因此 <span
+class="math inline">\(\sum_{a\in H}q(a)=nq(0)\)</span>
 </details>
 <p>对于 <span class="math inline">\(\mathbb F\)</span> 的乘法子群 <span
 class="math inline">\(H\)</span>，定义 <span
-class="math inline">\(Z_H(X)=X^{n}-1\)</span> 表示其零化多项式。</p>
+class="math inline">\(\mathbb Z_H(X)=X^{n}-1\)</span>
+表示其零化多项式。</p>
 <p><strong>引理 10.2</strong> <span class="math inline">\(\sum_{a\in
 H}p(a)=0\)</span> 当且仅当存在多项式 <span
 class="math inline">\(h^{*}(x)\)</span> 和 <span
@@ -508,13 +569,109 @@ X\]</span></p>
 <summary>
 证明
 </summary>
-<span class="math display">\[
-\begin{aligned}
-\sum_{a\in H}p(a)=0&amp;\Leftrightarrow p(0)=0\\
-&amp;\Leftrightarrow p(X)=h^{*}(X)\cdot Z_H(X)+f(X)\cdot X
-\end{aligned}
-\]</span>
+<p>如果 <span class="math inline">\(p(X)=h^{*}(X)\cdot \mathbb
+Z_H(X)+f(X)\cdot X\)</span>，根据零化多项式的性质，可得 <span
+class="math inline">\(\sum_{a\in H}p(a)=\sum_{a\in H}f(a)\cdot
+X\)</span>。而 <span class="math inline">\(f(X)\cdot X\)</span>
+的次数小于 <span class="math inline">\(n\)</span>，而且 <span
+class="math inline">\(f(0)\cdot 0=0\)</span>，因此有 <span
+class="math inline">\(\sum_{a\in H}p(a)=0\)</span>。</p>
+<p>另一方面，如果 <span class="math inline">\(\sum_{a\in
+H}p(a)=0\)</span>，将 <span class="math inline">\(p\)</span> 对 <span
+class="math inline">\(\mathbb Z_H\)</span> 取模得到 <span
+class="math inline">\(r\)</span>，即 <span
+class="math inline">\(p(X)=h^{*}(X)\cdot \mathbb
+Z_H(X)+r(X)\)</span>，因此 <span class="math inline">\(\sum_{a\in
+H}p(a)=\sum_{a\in H}r(a)\)</span>。其中 <span
+class="math inline">\(r(X)\)</span> 的次数小于 <span
+class="math inline">\(n\)</span>，因此 <span
+class="math inline">\(r(0)=0\)</span>，进而可以推出 <span
+class="math inline">\(r\)</span> 的常数项为 <span
+class="math inline">\(0\)</span>，即 <span
+class="math inline">\(r(X)=f(X)\cdot X\)</span>。</p>
 </details>
+<p>我们可以用<code>引理 10.2</code>来构造一个多项式
+IOP，证明一个单变量函数在 <span class="math inline">\(H\)</span>
+上求和为 <span class="math inline">\(0\)</span>。证明者给出函数 <span
+class="math inline">\(h^{*}\)</span> 和 <span
+class="math inline">\(f\)</span> 的承诺，验证者随机选取 <span
+class="math inline">\(r\leftarrow\mathbb F\)</span>，验证 <span
+class="math inline">\(p(r)=h^{*}(r)\cdot \mathbb Z_H(r)+f(r)\cdot
+r\)</span>。可靠性错误概率为 <span
+class="math inline">\(\frac{\max\{n,D\}}{|\mathbb
+F|}\)</span>。我们称这个协议为<strong>单变量求和协议（univariant
+sum-check protocol）</strong>。</p>
+<p>接下来我们将利用单变量求和协议构建一个证明 R1CS-SAT 的多项式
+IOP。对于矩阵 <span class="math inline">\(A,B,C\in\mathbb F^{m\times
+n}\)</span> 证明者需要证明他直到一个 <span
+class="math inline">\(z\)</span> 使得 <span
+class="math display">\[Az\circ Bz=Cz\]</span> 为了简化问题我们假设 <span
+class="math inline">\(m=n\)</span>，假设存在一个 <span
+class="math inline">\(\mathbb F\)</span> 的乘法子群 <span
+class="math inline">\(H\)</span> 大小恰好为 <span
+class="math inline">\(n\)</span>。</p>
+<p>令 <span class="math inline">\(\hat{z}\)</span> 为 <span
+class="math inline">\(z\)</span>
+的单变量多项式扩展（拉格朗日插值），其度数不超过 <span
+class="math inline">\(n-1\)</span> 且 <span
+class="math inline">\(\forall h\in
+H,\hat{z}(h)=z_h\)</span>。类似地，对于 <span
+class="math inline">\(z_A=Az,z_B=Bz,z_C=Cz\)</span>，记 <span
+class="math inline">\(\hat{z}_A,\hat{z}_B,\hat{z}_C\)</span>
+为它们的扩展。</p>
+<p>证明者给出 <span
+class="math inline">\(\hat{z},\hat{z}_A,\hat{z}_B,\hat{z}_C\)</span>
+的承诺，验证者需要检查两部分：</p>
+<p><span class="math display">\[
+\forall h\in H:\hat{z}_A(h)\cdot\hat{z}_B(h)=\hat{z}_C(h)
+\]</span></p>
+<p>以及</p>
+<p><span class="math display">\[
+\forall h\in H,M\in\{A,B,C\}:\hat{z}_M(h)=\sum_{j\in
+H}M_{h,j}\cdot\hat{z}(j)
+\]</span></p>
+<p><strong>第一部分</strong> 根据
+<code>引理 9.3</code>，这个式子等价于存在一个度数不超过 <span
+class="math inline">\(n\)</span> 的函数 <span
+class="math inline">\(h^{*}\)</span>，使得 <span class="math display">\[
+\hat{z}_A(X)\cdot\hat{z}_B(X)-\hat{z}_C(X)=h^{*}(X)\cdot\mathbb Z_H(X)
+\]</span> 证明者给出 <span class="math inline">\(h^*(X)\)</span>
+的承诺，验证者随机选取一个 <span
+class="math inline">\(r\leftarrow\mathbb F\)</span>，检查 <span
+class="math display">\[
+\hat{z}_A(r)\cdot\hat{z}_B(r)-\hat{z}_C(r)=h^{*}(r)\cdot\mathbb Z_H(r)
+\]</span> 由于 <span class="math inline">\(\mathbb Z_H\)</span>
+的稀疏性，验证者可以自行计算 <span class="math inline">\(\mathbb
+Z_H(r)\)</span>。</p>
+<p><strong>第二部分</strong> 令 <span
+class="math inline">\(\hat{M}(x,y)\)</span> 表示 <span
+class="math inline">\(M_{x,y}\)</span> 的双变量低度数扩展，即 <span
+class="math inline">\(\hat{M}(x,y)=M_{x,y}\)</span> 且 <span
+class="math inline">\(\hat{M}\)</span> 的度数不超过 <span
+class="math inline">\(n\)</span>，这样的多项式是<strong>唯一的</strong>。另外，由于
+<span class="math inline">\(\hat{z}\)</span> 和 <span
+class="math inline">\(\hat{z}_M\)</span>
+的唯一性，第二部分的式子等价于： <span class="math display">\[
+\hat{z}_M(X)=\sum_{j\in H}\hat{M}(X,j)\hat{z}(j)
+\]</span> 验证者随机选取 <span class="math inline">\(r\leftarrow\mathbb
+F\)</span>，检查 <span class="math display">\[
+\hat{z}_M(r)=\sum_{j\in H}\hat{M}(r,j)\hat{z}(j)
+\]</span> 令 <span class="math display">\[
+q(Y)=\hat{M}(r&#39;,Y)\hat{z}(Y)-\hat{z}_M(r&#39;)\cdot|H|^{-1}
+\]</span> 注意到 <span class="math inline">\(\sum_{j\in
+H}q(Y)=\sum_{j\in
+H}\hat{M}(r,j)\hat{z}(j)-\hat{z}_M(r)\)</span>，验证者只需检查 <span
+class="math display">\[
+\sum_{j\in H}q(Y)=0
+\]</span> 此时应用单变量求和协议，最终验证者只需要随机选取 <span
+class="math inline">\(r&#39;&#39;\leftarrow\mathbb F\)</span>，确认
+<span
+class="math inline">\(\hat{z}(r&#39;&#39;),\hat{z}_M(r&#39;)\)</span> 和
+<span class="math inline">\(\hat{M}(r&#39;,r&#39;&#39;)\)</span>
+的取值，即可完成证明。</p>
+<p>还剩下一个问题，验证者如何快速计算 <span
+class="math inline">\(\hat{M}(r&#39;,r&#39;&#39;)\)</span>？</p>
+<p>（to be done）</p>
 <hr />
 <h3 id="fri-and-associated-polynomial-commitments">FRI and Associated
 Polynomial Commitments</h3>
@@ -610,7 +767,8 @@ Circuit Satisfaction</span></a></li><li class="nav-item nav-level-3"><a class="n
 Deep Circuits</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#extension-from-circuit-sat-to-r1cs-sat"><span class="nav-number">1.4.</span> <span class="nav-text">Extension from
 Circuit-SAT to R1CS-SAT</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#mipnexp"><span class="nav-number">1.5.</span> <span class="nav-text">MIP&#x3D;NEXP</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A6%82%E7%8E%87%E5%8F%AF%E9%AA%8C%E8%AF%81%E8%AF%81%E6%98%8E%E4%B8%8E%E7%AE%80%E6%B4%81%E8%AE%BA%E8%AF%81"><span class="nav-number">2.</span> <span class="nav-text">9 概率可验证证明与简洁论证</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#pcps-definition-and-relationship-to-mips"><span class="nav-number">2.1.</span> <span class="nav-text">PCPs: Definition and
 Relationship to MIPs</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#compiling-a-pcp-into-a-succinct-argument"><span class="nav-number">2.2.</span> <span class="nav-text">Compiling a PCP Into a
-Succinct Argument</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%A4%E4%BA%92%E5%BC%8F%E9%A2%84%E8%A8%80%E6%9C%BA%E8%AF%81%E6%98%8E"><span class="nav-number">3.</span> <span class="nav-text">10 交互式预言机证明</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#iops-definition-and-associated-succinct-arguments"><span class="nav-number">3.1.</span> <span class="nav-text">IOPs:
+Succinct Argument</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#a-pcp-of-quasilinear-length-for-arithmetic-circuit-satisfiability"><span class="nav-number">2.3.</span> <span class="nav-text">A
+PCP of Quasilinear Length for Arithmetic Circuit Satisfiability</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%A4%E4%BA%92%E5%BC%8F%E9%A2%84%E8%A8%80%E6%9C%BA%E8%AF%81%E6%98%8E"><span class="nav-number">3.</span> <span class="nav-text">10 交互式预言机证明</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#iops-definition-and-associated-succinct-arguments"><span class="nav-number">3.1.</span> <span class="nav-text">IOPs:
 Definition and Associated Succinct Arguments</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#polynomial-iops-and-associated-succinct-arguments"><span class="nav-number">3.2.</span> <span class="nav-text">Polynomial
 IOPs and Associated Succinct Arguments</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#a-polynomial-iop-for-r1cs-satisfiability"><span class="nav-number">3.3.</span> <span class="nav-text">A Polynomial IOP for
 R1CS-satisfiability</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#fri-and-associated-polynomial-commitments"><span class="nav-number">3.4.</span> <span class="nav-text">FRI and Associated
