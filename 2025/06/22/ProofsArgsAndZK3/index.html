@@ -28,7 +28,7 @@
 <meta property="og:description" content="本篇笔记涵盖 《Proofs, Arguments, and Zero-Knowledge》 的第8章 ，第9章和第10章。">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2025-06-22T04:30:53.000Z">
-<meta property="article:modified_time" content="2025-06-24T17:08:59.562Z">
+<meta property="article:modified_time" content="2025-06-25T00:28:05.435Z">
 <meta property="article:author" content="Louhc">
 <meta property="article:tag" content="crypto">
 <meta property="article:tag" content="zk">
@@ -198,7 +198,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2025-06-24 09:08:59" itemprop="dateModified" datetime="2025-06-24T09:08:59-08:00">2025-06-24</time>
+                <time title="修改时间：2025-06-24 16:28:05" itemprop="dateModified" datetime="2025-06-24T16:28:05-08:00">2025-06-24</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -434,13 +434,90 @@ Succinct Argument</h3>
 <hr />
 <h2 id="交互式预言机证明">10 交互式预言机证明</h2>
 <hr />
-<h3 id="iop-定义">IOP 定义</h3>
-<blockquote>
-<p>An IOP is an IP where, in each round the verifier is not forced to
-read the prover’s entire message, but rather is given query access to
-it, meaning it can choose to look at any desired symbol of the message
-at the “cost” of a single query.</p>
-</blockquote>
+<h3 id="iops-definition-and-associated-succinct-arguments">IOPs:
+Definition and Associated Succinct Arguments</h3>
+<p><strong>IOP</strong>（Interactive Oblivious Proof） 是一种
+<strong>IP</strong>，验证者在每一轮中无需读取证明者的<strong>整个</strong>消息，而是被赋予对其的<strong>查询访问权限</strong>，这意味着它可以选择查看消息中的任何所需符号，而“成本”仅为一次查询。</p>
+<p>任意 IOP
+都可以转化为一个非交互性论证。具体地，证明者不再发送完整的消息，而是发送一个
+Merkle
+commitment，然后验证者发送要查询的符号的位置，证明者提供它们的值以及证明；然后，通过
+Fiat-Shamir 将协议转化为非交互性的。</p>
+<hr />
+<h3 id="polynomial-iops-and-associated-succinct-arguments">Polynomial
+IOPs and Associated Succinct Arguments</h3>
+<p>在一个标准的 IOP 中，证明者发送的消息是字符串，但是在多项式 IOP
+中，证明者发送的第 <span class="math inline">\(i\)</span> 条消息是函数
+<span class="math inline">\(h_i\)</span>，其度数不超过 <span
+class="math inline">\(d_i\)</span>。在这章我们假设 <span
+class="math inline">\(h_i\)</span>
+是单变量的，但是它可以是多变量的。</p>
+<p>我们假设 <span class="math inline">\(h_i\)</span>
+的参数很多，也就是说验证者无法读入所有的参数，只能对任意一点进行求值，即发送
+<span class="math inline">\(r\)</span>，得到 <span
+class="math inline">\(h_i(r)\)</span>。</p>
+<hr />
+<h3 id="a-polynomial-iop-for-r1cs-satisfiability">A Polynomial IOP for
+R1CS-satisfiability</h3>
+<p><strong>事实 10.1</strong> 设 <span class="math inline">\(F\)</span>
+是一个有限域，<span class="math inline">\(H\)</span> 是 <span
+class="math inline">\(F\)</span> 的一个大小为 <span
+class="math inline">\(n\)</span> 的乘法子群。那么对于任意次数小于 <span
+class="math inline">\(|H| = n\)</span> 的多项式 <span
+class="math inline">\(q\)</span>，有 <span class="math inline">\(\sum_{a
+\in H} q(a) = q(0)\cdot|H|\)</span>。由此可得，<span
+class="math inline">\(\sum_{a \in H} q(a) = 0\)</span> 当且仅当 <span
+class="math inline">\(q(0) = 0\)</span>。</p>
+<details>
+<summary>
+证明
+</summary>
+<p>由乘法群的性质可得，<span class="math display">\[\prod_{a\in
+H}(X-a)=X^n-1\]</span></p>
+<p>对比等式的两边，可以发现 <span class="math inline">\(X^{n-1}\)</span>
+的系数 <span class="math inline">\(-\sum_{a\in H}a=0\)</span>。</p>
+<p>令 <span class="math inline">\(q:X\to X^m\)</span>（<span
+class="math inline">\(1&lt;m&lt;n\)</span>）
+表示任意单项式。由于有限域的乘法子群是循环群，可以将 <span
+class="math inline">\(H\)</span> 表示为 <span
+class="math inline">\(H=\{h,...,h^{n}\}\)</span>。因此</p>
+<p><span class="math display">\[
+\sum_{a\in H}q(a)=\sum_{j=1}^{n}h^{j\cdot m}
+\]</span></p>
+<p>而 <span class="math inline">\(h^m\)</span> 是 <span
+class="math inline">\(h^mH\)</span> 的生成元，且 <span
+class="math inline">\(h^mH\)</span> 也是乘法子群，因此 <span
+class="math inline">\(\sum_{j=1}^{n}h^{j\cdot m}=0\)</span>。</p>
+因此，对于任意多项式 <span class="math inline">\(q\)</span>，在 <span
+class="math inline">\(H\)</span> 上求和时，次数 <span
+class="math inline">\(\geq1\)</span> 的项都会被消掉，只剩下常数项，即
+$q(0)。因此 <span class="math inline">\(\sum_{a\in H}q(a)=nq(0)\)</span>
+</details>
+<p>对于 <span class="math inline">\(\mathbb F\)</span> 的乘法子群 <span
+class="math inline">\(H\)</span>，定义 <span
+class="math inline">\(Z_H(X)=X^{n}-1\)</span> 表示其零化多项式。</p>
+<p><strong>引理 10.2</strong> <span class="math inline">\(\sum_{a\in
+H}p(a)=0\)</span> 当且仅当存在多项式 <span
+class="math inline">\(h^{*}(x)\)</span> 和 <span
+class="math inline">\(f(x)\)</span>，<span
+class="math inline">\(\mathrm{deg}(h^{*})\leq D-n\)</span> 且 <span
+class="math inline">\(\mathrm{deg}(f)&lt;n-1\)</span>，使得 <span
+class="math display">\[p(X)=h^{*}(X)\cdot Z_H(X)+f(X)\cdot
+X\]</span></p>
+<details>
+<summary>
+证明
+</summary>
+<span class="math display">\[
+\begin{aligned}
+\sum_{a\in H}p(a)=0&amp;\Leftrightarrow p(0)=0\\
+&amp;\Leftrightarrow p(X)=h^{*}(X)\cdot Z_H(X)+f(X)\cdot X
+\end{aligned}
+\]</span>
+</details>
+<hr />
+<h3 id="fri-and-associated-polynomial-commitments">FRI and Associated
+Polynomial Commitments</h3>
 
     </div>
 
@@ -533,7 +610,11 @@ Circuit Satisfaction</span></a></li><li class="nav-item nav-level-3"><a class="n
 Deep Circuits</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#extension-from-circuit-sat-to-r1cs-sat"><span class="nav-number">1.4.</span> <span class="nav-text">Extension from
 Circuit-SAT to R1CS-SAT</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#mipnexp"><span class="nav-number">1.5.</span> <span class="nav-text">MIP&#x3D;NEXP</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A6%82%E7%8E%87%E5%8F%AF%E9%AA%8C%E8%AF%81%E8%AF%81%E6%98%8E%E4%B8%8E%E7%AE%80%E6%B4%81%E8%AE%BA%E8%AF%81"><span class="nav-number">2.</span> <span class="nav-text">9 概率可验证证明与简洁论证</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#pcps-definition-and-relationship-to-mips"><span class="nav-number">2.1.</span> <span class="nav-text">PCPs: Definition and
 Relationship to MIPs</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#compiling-a-pcp-into-a-succinct-argument"><span class="nav-number">2.2.</span> <span class="nav-text">Compiling a PCP Into a
-Succinct Argument</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%A4%E4%BA%92%E5%BC%8F%E9%A2%84%E8%A8%80%E6%9C%BA%E8%AF%81%E6%98%8E"><span class="nav-number">3.</span> <span class="nav-text">10 交互式预言机证明</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#iop-%E5%AE%9A%E4%B9%89"><span class="nav-number">3.1.</span> <span class="nav-text">IOP 定义</span></a></li></ol></li></ol></div>
+Succinct Argument</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%A4%E4%BA%92%E5%BC%8F%E9%A2%84%E8%A8%80%E6%9C%BA%E8%AF%81%E6%98%8E"><span class="nav-number">3.</span> <span class="nav-text">10 交互式预言机证明</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#iops-definition-and-associated-succinct-arguments"><span class="nav-number">3.1.</span> <span class="nav-text">IOPs:
+Definition and Associated Succinct Arguments</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#polynomial-iops-and-associated-succinct-arguments"><span class="nav-number">3.2.</span> <span class="nav-text">Polynomial
+IOPs and Associated Succinct Arguments</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#a-polynomial-iop-for-r1cs-satisfiability"><span class="nav-number">3.3.</span> <span class="nav-text">A Polynomial IOP for
+R1CS-satisfiability</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#fri-and-associated-polynomial-commitments"><span class="nav-number">3.4.</span> <span class="nav-text">FRI and Associated
+Polynomial Commitments</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
