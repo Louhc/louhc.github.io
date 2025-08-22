@@ -28,7 +28,7 @@
 <meta property="og:description" content="本篇笔记涵盖 《Proofs, Arguments, and Zero-Knowledge》 的第8章 ，第9章和第10章。">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2025-06-22T04:30:53.000Z">
-<meta property="article:modified_time" content="2025-06-25T12:07:27.893Z">
+<meta property="article:modified_time" content="2025-06-26T18:05:01.712Z">
 <meta property="article:author" content="Louhc">
 <meta property="article:tag" content="crypto">
 <meta property="article:tag" content="zk">
@@ -198,7 +198,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2025-06-25 04:07:27" itemprop="dateModified" datetime="2025-06-25T04:07:27-08:00">2025-06-25</time>
+                <time title="修改时间：2025-06-26 10:05:01" itemprop="dateModified" datetime="2025-06-26T10:05:01-08:00">2025-06-26</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -369,9 +369,111 @@ class="math inline">\(\widetilde{w}(r)\)</span> 并与第一个证明者声称�
 <p>该协议的一个缺点在于时间和深度成正比（<span
 class="math inline">\(O(d\log
 S)\)</span>）。更主要的缺点是证明大小很大。接下来我们将介绍一个更高效的协议。</p>
+<p>我们要定义一大堆东西<del>（bushi）</del>。</p>
+<ul>
+<li><span
+class="math inline">\(\mathrm{add},\mathrm{mult}:\{0,1\}^{3k}\to\{0,1\}\)</span>，指示门是否为加法/乘法门。<span
+class="math inline">\(\mathrm{add}(a,b,c)=1\)</span> 当且仅当门 <span
+class="math inline">\(a\)</span> 为加法门且输入为 <span
+class="math inline">\(b,c\)</span> 的输出，<span
+class="math inline">\(\mathrm{mult}\)</span> 同理。和 GKR
+协议不同，其定义域为<strong>全部</strong>门，而非某一层的门。</li>
+<li><span
+class="math inline">\(\mathrm{io}:\{0,1\}^{3k}\to\{0,1\}\)</span>，指示门是否为输入/出门。<span
+class="math inline">\(\mathrm{io}(a,b,c)=1\)</span> 等且仅当 <span
+class="math inline">\(a\)</span> 为输入门且 <span
+class="math inline">\(b=c=\mathrm 0\)</span>，或者 <span
+class="math inline">\(a\)</span> 为输出门且 <span
+class="math inline">\(b,c\)</span> 为该门的两个输入。</li>
+<li><span class="math inline">\(I_{x,y}:\{0,1\}^{k}\to\mathbb
+F\)</span>，指示输入/出门的值。如果 <span
+class="math inline">\(a\)</span> 是输入门，<span
+class="math inline">\(I_{x,y}(a)=x_a\)</span>；如果 <span
+class="math inline">\(a\)</span> 是输出门，<span
+class="math inline">\(I_{x,y}=y_a\)</span>。</li>
+<li><span class="math inline">\(G_{x,y,W}:\{0,1\}^{3k}\to\mathbb
+F\)</span>，定义如下： <span class="math display">\[
+\begin{aligned}
+G_{x,y,W}(a,b,c)&amp;=\mathrm{io}(a,b,c)\cdot(I_{x,y}(a)-W(a))\\
+&amp;+\mathrm{add}(a,b,c)\cdot(W(a)-(W(b)+W(c)))\\
+&amp;+\mathrm{mult}(a,b,c)\cdot(W(a)-W(b)\cdot W(c))
+\end{aligned}
+\]</span></li>
+</ul>
+<p><strong>引理 8.3</strong> 当且仅当 <span
+class="math inline">\(W\)</span> 是一个正确的计算轨迹时，<span
+class="math inline">\(\forall
+a,b,c\in\{0,1\}^{3k}:G_{x,y,W}(a,b,c)=0\)</span>。（事实上 <span
+class="math inline">\(a\)</span> 是输出门时，<span
+class="math inline">\(W(a)\)</span>
+的值好像没有用，也就是说值可以乱取）</p>
+<p>对于任意多项式 <span class="math inline">\(Z:\mathbb F^k\to\mathbb
+F\)</span>，定义多项式 <span class="math display">\[
+\begin{aligned}
+g_{x,y,Z}(a,b,c)&amp;=\widetilde{\mathrm{io}}(a,b,c)\cdot(\widetilde{I}_{x,y}(a)-Z(a))\\
+&amp;+\widetilde{\mathrm{add}}(a,b,c)\cdot(Z(a)-(Z(b)+Z(c)))\\
+&amp;+\widetilde{\mathrm{mult}}(a,b,c)\cdot(Z(a)-Z(b)\cdot Z(c))
+\end{aligned}
+\]</span> 因此当且仅当 <span class="math inline">\(\forall
+a,b,c\in\{0,1\}^{3k}:g_{x,y,Z}(a,b,c)=0\)</span> 时，<span
+class="math inline">\(Z\)</span>
+是一个正确的计算轨迹的多重线性扩展。</p>
+<p>定义 <span
+class="math inline">\(\beta_{3k}(a,b):\{0,1\}^{3k}\times\{0,1\}^{3k}\to\{0,1\}\)</span>，当且仅当
+<span class="math inline">\(a=b\)</span> 时，<span
+class="math inline">\(\beta_{3k}(a,b)=1\)</span>。<span
+class="math inline">\(\beta\)</span> 的多重线性扩展如下：<span
+class="math display">\[\widetilde{\beta}_{3k}(a,b)=\prod_{j=1}^{3k}((1-a_j)(1-b_j)+a_jb_j)\]</span></p>
+<p>定义多项式 <span class="math display">\[
+p(X):=\sum_{u\in\{0,1\}^{3k}}\widetilde{\beta}(X,u)\cdot g_{x,y,Z}(u)
+\]</span> 显然 <span class="math inline">\(p\)</span> 是多重线性的，而且
+<span class="math inline">\(p\)</span> 在 <span
+class="math inline">\(\{0,1\}^{3k}\)</span> 上全部取值为 <span
+class="math inline">\(0\)</span> 当且仅当 <span
+class="math inline">\(g_{x,y,Z}\)</span> 全取值为 <span
+class="math inline">\(0\)</span>。运用 Schwartz-Zippel Lemma，随机选一个
+<span class="math inline">\(r\leftarrow\mathbb F^{3k}\)</span>，如果
+<span class="math inline">\(p(r)=0\)</span>，那么 <span
+class="math inline">\(p(X)\equiv 0\)</span> 大概率成立。因此，定义函数
+<span class="math display">\[
+h_{x,y,Z}(Y):=\widetilde{\beta}(r,Y)\cdot g_{x,y,Z}(Y)
+\]</span> 可以发现 <span
+class="math inline">\(\sum_{Y\in\{0,1\}^{3k}}h_{x,y,Z}(Y)=p(r)\)</span>。此时，我们找到了一个多项式
+<span class="math inline">\(h_{x,y,Z}\)</span>，使得 <span
+class="math display">\[
+\sum_{u\in\{0,1\}^{3k}}h_{x,y,Z}(u)=0\Longleftrightarrow Z\text{
+extends  a correct transcript}
+\]</span></p>
+<p>接下来就可以应用Sum-Check Protocol。将 <span
+class="math inline">\(r\in\mathbb F^{3k}\)</span> 按照位数均分为三份
+<span class="math inline">\(r_1r_2r_3\)</span>，验证者只需要对 <span
+class="math inline">\(\widetilde{\beta}_{3k}(r)\)</span>，<span
+class="math inline">\(\widetilde{\mathrm{io}}(r)\)</span>，<span
+class="math inline">\(\widetilde{\mathrm{add}}(r)\)</span>，<span
+class="math inline">\(\widetilde{\mathrm{mult}}(r)\)</span>，<span
+class="math inline">\(\widetilde{I}_{x,y}(r_1)\)</span>，<span
+class="math inline">\(Z(r_1)\)</span>，<span
+class="math inline">\(Z(r_2)\)</span> 和 <span
+class="math inline">\(Z(r_3)\)</span>
+求值即可。除了最后三个，验证者都可以自行计算。但是由于验证者不知道多项式
+<span class="math inline">\(Z\)</span>，他需要借助证明者的力量来计算
+<span class="math inline">\(Z(r_1)\)</span>，<span
+class="math inline">\(Z(r_2)\)</span> 和 <span
+class="math inline">\(Z(r_3)\)</span>。</p>
+<p>我们通过 <code>4.5.2</code> 的技巧，将其转换为计算 <span
+class="math inline">\(Z\)</span> 在单独一个点上的取值 <span
+class="math inline">\(Z(r_4)\)</span>，验证者直接要求第二个证明者提供
+<span class="math inline">\(Z(r_4)\)</span>
+的值，同时进行低次测试，就像这一个 section 开头描述的那样。</p>
 <hr />
 <h3 id="a-succinct-argument-for-deep-circuits">A Succinct Argument for
 Deep Circuits</h3>
+<p>通过使用任意多项式承诺，可以将上一个 section 提到的 MIP
+协议转换为一个针对又深又窄的算数电路的简洁论证。</p>
+<p>缺点在于，需要对整个计算轨迹 <span
+class="math inline">\(\widetilde{W}:\mathbb F^{\log n}\to \mathbb
+F\)</span> 做一个承诺，而第七章用 GKR 协议直接构造的简洁论证只需要对见证
+<span class="math inline">\(\widetilde{w}\)</span> 做一个承诺。</p>
 <hr />
 <h3 id="extension-from-circuit-sat-to-r1cs-sat">Extension from
 Circuit-SAT to R1CS-SAT</h3>
@@ -452,9 +554,37 @@ class="math inline">\(\mathcal{P}_i\)</span>
 <h3 id="compiling-a-pcp-into-a-succinct-argument">Compiling a PCP Into a
 Succinct Argument</h3>
 <hr />
+<h3 id="a-first-polynomial-length-pcp-from-an-mip">A First Polynomial
+Length PCP, From an MIP</h3>
+<hr />
 <h3
 id="a-pcp-of-quasilinear-length-for-arithmetic-circuit-satisfiability">A
 PCP of Quasilinear Length for Arithmetic Circuit Satisfiability</h3>
+<h4
+id="step-1-reduce-to-checking-that-a-polynomial-vanishes-on-a-designated-subspace">Step
+1: Reduce to checking that a polynomial vanishes on a designated
+subspace</h4>
+<p>首先，将声明“<span
+class="math inline">\(M(x)=y\)</span>”转变为一个等价的电路可满足性问题
+<span class="math inline">\(\{\mathcal
+C,x,y\}\)</span>，证明者声称知道一个低次多项式 <span
+class="math inline">\(Z\)</span> 是一个正确的计算轨迹 <span
+class="math inline">\(W\)</span> 的扩展。然后像 MIP 一样，找到一个多项式
+<span class="math inline">\(g_{x,y,Z}\)</span> 使得 <span
+class="math display">\[
+\forall a\in H:g_{x,y,Z}(a)=0\Longleftrightarrow Z\text{ extends a
+correct transcript for }\{\mathcal C,x,y\}
+\]</span></p>
+<h4
+id="step-2-reduce-to-checking-that-a-related-polynomial-is-low-degree">Step
+2: Reduce to Checking that a Related Polynomial is Low-Degree</h4>
+<p>检查 <span class="math inline">\(g_{x,y,W}\)</span> 是否在 <span
+class="math inline">\(H\)</span> 上消失的过程和 MIP 十分类似。MIP
+中我们检查了一个<em>多重线性多项式</em>是否在 <span
+class="math inline">\(\{0,1\}^{3k}\)</span>
+消失，现在我们需要检查一个<em>单变量多项式</em>是否在一个特定的集合
+<span class="math inline">\(H\)</span>
+上消失。我们需要用到下面的引理：</p>
 <p><strong>引理 9.3</strong> 设 <span class="math inline">\(\mathbb
 F\)</span> 是一个域，<span class="math inline">\(H \subseteq \mathbb
 F\)</span>。对于 <span class="math inline">\(d \geq |H|\)</span>，一个
@@ -464,21 +594,23 @@ class="math inline">\(g\)</span> 在 <span
 class="math inline">\(H\)</span> 上消失（即 <span
 class="math inline">\(g(\alpha) = 0\)</span> 对所有 <span
 class="math inline">\(\alpha \in H\)</span> 成立）当且仅当多项式 <span
-class="math inline">\(Z_H(t) := \prod_{\alpha \in H}(t -
+class="math inline">\(\mathbb Z_H(t) := \prod_{\alpha \in H}(t -
 \alpha)\)</span> 整除 <span
 class="math inline">\(g\)</span>。换言之，当且仅当存在一个次数不超过
 <span class="math inline">\(d - |H|\)</span> 的多项式 <span
 class="math inline">\(h^*\)</span>，使得 <span class="math inline">\(g =
-Z_H \cdot h^*\)</span>。</p>
+\mathbb Z_H \cdot h^*\)</span>。</p>
 <details>
 <summary>
 证明
 </summary>
 <p><strong>方向 1</strong>（充分性）：<br />
-若 <span class="math inline">\(g = Z_H \cdot h^*\)</span>，则对任意
-<span class="math inline">\(\alpha \in H\)</span>，有<br />
+若 <span class="math inline">\(g = \mathbb Z_H \cdot
+h^*\)</span>，则对任意 <span class="math inline">\(\alpha \in
+H\)</span>，有<br />
 <span class="math display">\[
-g(\alpha) = Z_H(\alpha) \cdot h^*(\alpha) = 0 \cdot h^*(\alpha) = 0,
+g(\alpha) = \mathbb Z_H(\alpha) \cdot h^*(\alpha) = 0 \cdot h^*(\alpha)
+= 0,
 \]</span> 因此 <span class="math inline">\(g\)</span> 在 <span
 class="math inline">\(H\)</span> 上消失。</p>
 <strong>方向 2</strong>（必要性）：<br />
@@ -487,9 +619,42 @@ class="math inline">\(H\)</span> 上消失，则对每个 <span
 class="math inline">\(\alpha \in H\)</span>，多项式 <span
 class="math inline">\((t - \alpha)\)</span> 整除 <span
 class="math inline">\(g(t)\)</span>。因此，<span
-class="math inline">\(Z_H(t)\)</span> 作为这些线性因子的乘积，必然整除
-<span class="math inline">\(g\)</span>。
+class="math inline">\(\mathbb Z_H(t)\)</span>
+作为这些线性因子的乘积，必然整除 <span
+class="math inline">\(g\)</span>。
 </details>
+<p>因此证明字符串只需要证明存在一个度数不超过 <span
+class="math inline">\(d-|H|\)</span> 的多项式 <span
+class="math inline">\(h^{*}(z)\)</span>，使得 <span
+class="math inline">\(g_{x,y,Z}(z)=\mathbb Z_H(z)\cdot
+h^{*}(z)\)</span>。如果 <span class="math inline">\(\frac{|\mathbb
+F|}{|H|}\)</span> 足够大，那么验证者就可以随机选取一个 <span
+class="math inline">\(r\leftarrow\mathbb F\)</span>，检查 <span
+class="math display">\[g_{x,y,Z}(r)=\mathbb Z_H(r)\cdot
+h^{*}(r)\]</span> 要证明这个式子成立，证明字符串 <span
+class="math inline">\(\pi\)</span> 需要包含四部分：</p>
+<ol type="1">
+<li>对所有 <span class="math inline">\(z\in\mathbb F\)</span>，<span
+class="math inline">\(Z(z)\)</span> 的取值；</li>
+<li><span class="math inline">\(Z\)</span> 的次数不超过 <span
+class="math inline">\(|H|-1\)</span> 的证明 <span
+class="math inline">\(\pi_Z\)</span>；</li>
+<li>对所有 <span class="math inline">\(z\in\mathbb F\)</span>，<span
+class="math inline">\(h^{*}(z)\)</span> 的取值；</li>
+<li><span class="math inline">\(h^{*}(z)\)</span> 的次数不超过 <span
+class="math inline">\(d-|H|\)</span> 的证明 <span
+class="math inline">\(\pi_{h^{*}}\)</span>。</li>
+</ol>
+<p>验证者对 <span class="math inline">\(Z\)</span>
+进行常数次查询后，可以在准线性时间内计算 <span
+class="math inline">\(g_{x,y,Z}(r)\)</span>；可以直接查询 <span
+class="math inline">\(h^{*}(r)\)</span> 的取值；可以在多对数时间内计算
+<span class="math inline">\(\mathbb Z_H(r)\)</span>。</p>
+<h4 id="step-3-a-pcp-for-reed-solomon-testing">Step 3: A PCP for
+Reed-Solomon Testing</h4>
+<p>PCP构造的核心在于第三步——验证单变量多项式是否为低次多项式。这一任务在文献中被称为<strong>里德-所罗门测试（Reed-Solomon
+testing）</strong>，因为 RS
+码的码字正是由低次单变量多项式的求值结果构成的。</p>
 <hr />
 <h2 id="交互式预言机证明">10 交互式预言机证明</h2>
 <hr />
@@ -767,8 +932,13 @@ Circuit Satisfaction</span></a></li><li class="nav-item nav-level-3"><a class="n
 Deep Circuits</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#extension-from-circuit-sat-to-r1cs-sat"><span class="nav-number">1.4.</span> <span class="nav-text">Extension from
 Circuit-SAT to R1CS-SAT</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#mipnexp"><span class="nav-number">1.5.</span> <span class="nav-text">MIP&#x3D;NEXP</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A6%82%E7%8E%87%E5%8F%AF%E9%AA%8C%E8%AF%81%E8%AF%81%E6%98%8E%E4%B8%8E%E7%AE%80%E6%B4%81%E8%AE%BA%E8%AF%81"><span class="nav-number">2.</span> <span class="nav-text">9 概率可验证证明与简洁论证</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#pcps-definition-and-relationship-to-mips"><span class="nav-number">2.1.</span> <span class="nav-text">PCPs: Definition and
 Relationship to MIPs</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#compiling-a-pcp-into-a-succinct-argument"><span class="nav-number">2.2.</span> <span class="nav-text">Compiling a PCP Into a
-Succinct Argument</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#a-pcp-of-quasilinear-length-for-arithmetic-circuit-satisfiability"><span class="nav-number">2.3.</span> <span class="nav-text">A
-PCP of Quasilinear Length for Arithmetic Circuit Satisfiability</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%A4%E4%BA%92%E5%BC%8F%E9%A2%84%E8%A8%80%E6%9C%BA%E8%AF%81%E6%98%8E"><span class="nav-number">3.</span> <span class="nav-text">10 交互式预言机证明</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#iops-definition-and-associated-succinct-arguments"><span class="nav-number">3.1.</span> <span class="nav-text">IOPs:
+Succinct Argument</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#a-first-polynomial-length-pcp-from-an-mip"><span class="nav-number">2.3.</span> <span class="nav-text">A First Polynomial
+Length PCP, From an MIP</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#a-pcp-of-quasilinear-length-for-arithmetic-circuit-satisfiability"><span class="nav-number">2.4.</span> <span class="nav-text">A
+PCP of Quasilinear Length for Arithmetic Circuit Satisfiability</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#step-1-reduce-to-checking-that-a-polynomial-vanishes-on-a-designated-subspace"><span class="nav-number">2.4.1.</span> <span class="nav-text">Step
+1: Reduce to checking that a polynomial vanishes on a designated
+subspace</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#step-2-reduce-to-checking-that-a-related-polynomial-is-low-degree"><span class="nav-number">2.4.2.</span> <span class="nav-text">Step
+2: Reduce to Checking that a Related Polynomial is Low-Degree</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#step-3-a-pcp-for-reed-solomon-testing"><span class="nav-number">2.4.3.</span> <span class="nav-text">Step 3: A PCP for
+Reed-Solomon Testing</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%A4%E4%BA%92%E5%BC%8F%E9%A2%84%E8%A8%80%E6%9C%BA%E8%AF%81%E6%98%8E"><span class="nav-number">3.</span> <span class="nav-text">10 交互式预言机证明</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#iops-definition-and-associated-succinct-arguments"><span class="nav-number">3.1.</span> <span class="nav-text">IOPs:
 Definition and Associated Succinct Arguments</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#polynomial-iops-and-associated-succinct-arguments"><span class="nav-number">3.2.</span> <span class="nav-text">Polynomial
 IOPs and Associated Succinct Arguments</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#a-polynomial-iop-for-r1cs-satisfiability"><span class="nav-number">3.3.</span> <span class="nav-text">A Polynomial IOP for
 R1CS-satisfiability</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#fri-and-associated-polynomial-commitments"><span class="nav-number">3.4.</span> <span class="nav-text">FRI and Associated
@@ -786,7 +956,7 @@ Polynomial Commitments</span></a></li></ol></li></ol></div>
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">24</span>
+          <span class="site-state-item-count">25</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -799,7 +969,7 @@ Polynomial Commitments</span></a></li></ol></li></ol></div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-count">10</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
